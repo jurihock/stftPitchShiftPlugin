@@ -1,16 +1,20 @@
-.PHONY: help build run clean
+.PHONY: help build clean app log
 
 help:
 	@echo build
-	@echo run
 	@echo clean
+	@echo app
+	@echo log
 
 build:
 	@cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
 	@cmake --build build
 
-run:
-	@open -n ./build/StftPitchShiftPlugin_artefacts/Release/Standalone/StftPitchShiftPlugin.app
-
 clean:
 	@rm -rf build
+
+app:
+	@open -n ./build/StftPitchShiftPlugin_artefacts/Release/Standalone/StftPitchShiftPlugin.app
+
+log:
+	@tail -f ~/Library/Logs/StftPitchShiftPlugin/StftPitchShiftPlugin.log
