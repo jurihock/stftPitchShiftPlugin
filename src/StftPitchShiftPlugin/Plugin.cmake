@@ -25,11 +25,9 @@ target_sources(${CMAKE_PROJECT_NAME}
     "${CMAKE_CURRENT_LIST_DIR}/PluginEditor.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/PluginProcessor.cpp")
 
-target_compile_definitions(${CMAKE_PROJECT_NAME}
-  PUBLIC
-    JUCE_WEB_BROWSER=0
-    JUCE_USE_CURL=0
-    JUCE_VST3_CAN_REPLACE_VST2=0)
+target_link_libraries(${CMAKE_PROJECT_NAME}
+  PRIVATE
+    stftpitchshift)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
   PRIVATE
@@ -39,21 +37,27 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
-  PRIVATE
-    stftpitchshift)
-
-# FIX
-# If you are using Link Time Optimisation (LTO), the new linker introduced in Xcode 15 may produce a broken binary.
-# As a workaround, add either '-Wl,-weak_reference_mismatches,weak' or '-Wl,-ld_classic' to your linker flags.
-# Once you've selected a workaround, you can add JUCE_SILENCE_XCODE_15_LINKER_WARNING
-# to your preprocessor definitions to silence this warning.
-# https://forum.juce.com/t/vst-au-builds-fail-after-upgrading-to-xcode-15/57936/43
-
-target_link_options(${CMAKE_PROJECT_NAME}
-  PRIVATE
-    -Wl,-ld_classic)
-
 target_compile_definitions(${CMAKE_PROJECT_NAME}
-  PRIVATE
-    JUCE_SILENCE_XCODE_15_LINKER_WARNING)
+  PUBLIC
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_VST3_CAN_REPLACE_VST2=0)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+  # FIX
+  # If you are using Link Time Optimisation (LTO), the new linker introduced in Xcode 15 may produce a broken binary.
+  # As a workaround, add either '-Wl,-weak_reference_mismatches,weak' or '-Wl,-ld_classic' to your linker flags.
+  # Once you've selected a workaround, you can add JUCE_SILENCE_XCODE_15_LINKER_WARNING
+  # to your preprocessor definitions to silence this warning.
+  # https://forum.juce.com/t/vst-au-builds-fail-after-upgrading-to-xcode-15/57936/43
+
+  target_link_options(${CMAKE_PROJECT_NAME}
+    PRIVATE
+      -Wl,-ld_classic)
+
+  target_compile_definitions(${CMAKE_PROJECT_NAME}
+    PRIVATE
+      JUCE_SILENCE_XCODE_15_LINKER_WARNING)
+
+endif()
