@@ -6,11 +6,11 @@ help:
 	@echo clean
 
 build:
-	@cmake -S . -B build
+	@cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
 	@cmake --build build
 
 run:
-	@open -n ./build/StftPitchShiftPlugin_artefacts/Standalone/StftPitchShiftPlugin.app
+	@open -n ./build/StftPitchShiftPlugin_artefacts/Release/Standalone/StftPitchShiftPlugin.app
 
 clean:
 	@rm -rf build
