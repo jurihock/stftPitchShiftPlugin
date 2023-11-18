@@ -2,6 +2,9 @@
 
 #include <StftPitchShiftPlugin/Editor.h>
 
+#include <algorithm>
+#include <span>
+
 Processor::Processor() :
   AudioProcessor(
     BusesProperties()
@@ -75,17 +78,21 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   juce::ignoreUnused(midi);
 
-  auto input_channels  = getTotalNumInputChannels();
-  auto output_channels = getTotalNumOutputChannels();
+  const int input_channels  = getTotalNumInputChannels();
+  const int output_channels = getTotalNumOutputChannels();
+  const int channel_samples = audio.getNumSamples();
+
+  if (channel_samples < 1)
+  {
+    return;
+  }
 
   // In case we have more outputs than inputs,
-  // this code clears any output channels that didn't contain input data,
-  // (because these aren't guaranteed to be empty - they may contain garbage).
-  // This is here to avoid people getting screaming feedback when they first compile a plugin,
-  // but obviously you don't need to keep this code if your algorithm always overwrites all the output channels.
-  for (auto i = input_channels; i < output_channels; ++i)
+  // clear any output channels that didn't contain input data,
+  // because these aren't guaranteed to be empty and may contain garbage.
+  for (int i = input_channels; i < output_channels; ++i)
   {
-    audio.clear(i, 0, audio.getNumSamples());
+    audio.clear(i, 0, channel_samples);
   }
 
   // This is the place where you'd normally do the guts of your plugin's audio processing.
@@ -93,12 +100,20 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   // and the outer loop is handling the channels.
   // Alternatively, you can process the samples with the channels
   // interleaved by keeping the same state.
-  for (int channel = 0; channel < input_channels; ++channel)
+  for (int channel = 0; channel < std::min(input_channels, output_channels); ++channel)
   {
-    auto* channelData = audio.getWritePointer(channel);
+    const auto samples = static_cast<size_t>(channel_samples);
 
-    // Do something to the data...
-    juce::ignoreUnused(channelData);
+    auto* input_data  = reinterpret_cast<const float*>(audio.getReadPointer(channel));
+    auto* output_data = reinterpret_cast<float*>(audio.getWritePointer(channel));
+
+    auto input  = std::span<const float>(input_data, samples);
+    auto output = std::span<float>(output_data, samples);
+
+    for (size_t i = 0; i < samples; ++i)
+    {
+      output[i] = input[i];
+    }
   }
 }
 
