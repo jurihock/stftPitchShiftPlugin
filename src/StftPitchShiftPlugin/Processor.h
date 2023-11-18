@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 
+#include <StftPitchShiftPlugin/Core.h>
 #include <StftPitchShiftPlugin/Logger.h>
 
 class Processor final : public juce::AudioProcessor
@@ -38,6 +39,8 @@ public:
   void setStateInformation(const void* data, int size) override;
 
 private:
+
+  std::unique_ptr<Core> core;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Processor)
 

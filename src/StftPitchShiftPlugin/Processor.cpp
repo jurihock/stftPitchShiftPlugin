@@ -2,9 +2,6 @@
 
 #include <StftPitchShiftPlugin/Editor.h>
 
-#include <algorithm>
-#include <span>
-
 Processor::Processor() :
   AudioProcessor(
     BusesProperties()
@@ -62,7 +59,18 @@ void Processor::prepareToPlay(double samplerate, int framesize)
 
   juce::ignoreUnused(samplerate, framesize);
 
-  LOG("Prepare to play (samplerate %f, framesize %i)", samplerate, framesize);
+  LOG("Prepare to play (samplerate %g, framesize %d)", samplerate, framesize);
+
+  try
+  {
+    core = std::make_unique<Core>(samplerate, framesize);
+  }
+  catch(const std::exception& exception)
+  {
+    core = nullptr;
+
+    LOG(exception.what());
+  }
 }
 
 void Processor::releaseResources()
@@ -70,6 +78,8 @@ void Processor::releaseResources()
   // When playback stops, you can use this as an opportunity to free up any spare memory, etc.
 
   LOG("Release resources");
+
+  core = nullptr;
 }
 
 void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& midi)
@@ -82,14 +92,28 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   const int output_channels = getTotalNumOutputChannels();
   const int channel_samples = audio.getNumSamples();
 
+  if (input_channels < 1)
+  {
+    LOG("Skip block (invalid number of input channels)");
+    return;
+  }
+
+  if (output_channels < 1)
+  {
+    LOG("Skip block (invalid number of output channels)");
+    return;
+  }
+
   if (channel_samples < 1)
   {
+    LOG("Skip block (invalid number of samples)");
     return;
   }
 
   // In case we have more outputs than inputs,
   // clear any output channels that didn't contain input data,
   // because these aren't guaranteed to be empty and may contain garbage.
+
   for (int i = input_channels; i < output_channels; ++i)
   {
     audio.clear(i, 0, channel_samples);
@@ -100,19 +124,46 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   // and the outer loop is handling the channels.
   // Alternatively, you can process the samples with the channels
   // interleaved by keeping the same state.
-  for (int channel = 0; channel < std::min(input_channels, output_channels); ++channel)
+
+  bool bypass = !core || !core->compatible(channel_samples);
+
+  if (!bypass)
   {
-    const auto samples = static_cast<size_t>(channel_samples);
-
-    auto* input_data  = reinterpret_cast<const float*>(audio.getReadPointer(channel));
-    auto* output_data = reinterpret_cast<float*>(audio.getWritePointer(channel));
-
-    auto input  = std::span<const float>(input_data, samples);
-    auto output = std::span<float>(output_data, samples);
-
-    for (size_t i = 0; i < samples; ++i)
+    for (int channel = 0; channel < std::min(input_channels, output_channels); ++channel)
     {
-      output[i] = input[i];
+      const auto samples = static_cast<size_t>(channel_samples);
+
+      auto input  = std::span<float>(const_cast<float*>(audio.getReadPointer(channel)), samples);
+      auto output = std::span<float>(audio.getWritePointer(channel), samples);
+
+      try
+      {
+        core->process(input, output);
+      }
+      catch(const std::exception& exception)
+      {
+        bypass = true;
+
+        LOG(exception.what());
+      }
+    }
+  }
+
+  if (bypass)
+  {
+    LOG("Bypass block");
+
+    for (int channel = 0; channel < std::min(input_channels, output_channels); ++channel)
+    {
+      const auto samples = static_cast<size_t>(channel_samples);
+
+      auto input  = std::span<const float>(audio.getReadPointer(channel), samples);
+      auto output = std::span<float>(audio.getWritePointer(channel), samples);
+
+      for (size_t i = 0; i < samples; ++i)
+      {
+        output[i] = input[i];
+      }
     }
   }
 }

@@ -1,16 +1,15 @@
 #include <StftPitchShiftPlugin/Editor.h>
 
-Editor::Editor(Processor& _process_) :
-  AudioProcessorEditor(_process_),
-  process(_process_)
+Editor::Editor(Processor& process) :
+  AudioProcessorEditor(process),
+  process(process)
 {
-  juce::ignoreUnused(process);
-
   setSize(400, 300);
 }
 
 Editor::~Editor()
 {
+  juce::ignoreUnused(process);
 }
 
 void Editor::paint(juce::Graphics& graphics)
