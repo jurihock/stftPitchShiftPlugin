@@ -20,7 +20,7 @@
     plugin_file_logger->logMessage(message);
   }
 
-  #define LOG(...) write_to_log_file(__VA_ARGS__)
+  #define LOG(...) do { write_to_log_file(__VA_ARGS__); } while (false)
 
 #else
 
