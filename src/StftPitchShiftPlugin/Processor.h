@@ -30,7 +30,7 @@ public:
   double getTailLengthSeconds() const override;
   bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
-  void prepareToPlay(double samplerate, int framesize) override;
+  void prepareToPlay(double samplerate, int blocksize) override;
   void releaseResources() override;
 
   void processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& midi) override;
@@ -39,6 +39,18 @@ public:
   void setStateInformation(const void* data, int size) override;
 
 private:
+
+  struct
+  {
+    bool bypass {false};
+
+    int dftsize {1024};
+    int overlap {4};
+
+    std::optional<double> samplerate {std::nullopt};
+    std::optional<int>    blocksize  {std::nullopt};
+  }
+  state;
 
   std::unique_ptr<Core> core;
 

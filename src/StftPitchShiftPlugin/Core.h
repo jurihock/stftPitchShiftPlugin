@@ -10,10 +10,10 @@ class Core final
 
 public:
 
-  Core(const double samplerate, const int framesize, const int dftsize = 1024, const int overlap = 4);
+  Core(const double samplerate, const int blocksize, const int dftsize, const int overlap);
   ~Core();
 
-  bool compatible(const int framesize) const;
+  bool compatible(const int blocksize) const;
 
   void process(const std::span<float> input, const std::span<float> output);
 

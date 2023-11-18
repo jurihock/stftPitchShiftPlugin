@@ -5,8 +5,8 @@
 Processor::Processor() :
   AudioProcessor(
     BusesProperties()
-      .withInput("Input",   juce::AudioChannelSet::mono(), true)
-      .withOutput("Output", juce::AudioChannelSet::mono(), true))
+      .withInput("Input",   juce::AudioChannelSet::mono(),   true)
+      .withOutput("Output", juce::AudioChannelSet::stereo(), true))
 {
 }
 
@@ -53,22 +53,40 @@ bool Processor::isBusesLayoutSupported(const BusesLayout& layouts) const
   return true;
 }
 
-void Processor::prepareToPlay(double samplerate, int framesize)
+void Processor::prepareToPlay(double samplerate, int blocksize)
 {
-  // Use this method as the place to do any pre-playback initialisation that you need.
+  state.samplerate = std::nullopt;
+  state.blocksize  = std::nullopt;
 
-  juce::ignoreUnused(samplerate, framesize);
+  core = nullptr;
 
-  LOG("Prepare to play (samplerate %g, framesize %d)", samplerate, framesize);
+  if (samplerate < 1)
+  {
+    LOG("Prepare to play (invalid samplerate %g)", samplerate);
+    return;
+  }
+
+  if (blocksize < 1)
+  {
+    LOG("Prepare to play (invalid blocksize %d)", blocksize);
+    return;
+  }
+
+  LOG("Prepare to play (samplerate %g, blocksize %d)", samplerate, blocksize);
+
+  state.samplerate = samplerate;
+  state.blocksize  = blocksize;
 
   try
   {
-    core = std::make_unique<Core>(samplerate, framesize);
+    core = std::make_unique<Core>(
+      state.samplerate.value(),
+      state.blocksize.value(),
+      state.dftsize,
+      state.overlap);
   }
   catch(const std::exception& exception)
   {
-    core = nullptr;
-
     LOG(exception.what());
   }
 }
@@ -78,6 +96,9 @@ void Processor::releaseResources()
   // When playback stops, you can use this as an opportunity to free up any spare memory, etc.
 
   LOG("Release resources");
+
+  state.samplerate = std::nullopt;
+  state.blocksize  = std::nullopt;
 
   core = nullptr;
 }
@@ -94,30 +115,34 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   if (input_channels < 1)
   {
-    LOG("Skip block (invalid number of input channels)");
+    LOG("Skip block (invalid number of input channels %d)", input_channels);
     return;
   }
 
   if (output_channels < 1)
   {
-    LOG("Skip block (invalid number of output channels)");
+    LOG("Skip block (invalid number of output channels %d)", output_channels);
     return;
   }
 
   if (channel_samples < 1)
   {
-    LOG("Skip block (invalid number of samples)");
+    LOG("Skip block (invalid number of samples per block %d)", channel_samples);
     return;
   }
 
-  // In case we have more outputs than inputs,
-  // clear any output channels that didn't contain input data,
-  // because these aren't guaranteed to be empty and may contain garbage.
-
-  for (int i = input_channels; i < output_channels; ++i)
+  auto copy_input_to_output = [&](const std::string& reason = "")
   {
-    audio.clear(i, 0, channel_samples);
-  }
+    if (!reason.empty())
+    {
+      LOG("Copy input to output (%s)", reason.c_str());
+    }
+
+    for (int channel = 1; channel < output_channels; ++channel)
+    {
+      audio.copyFrom(channel, 0, audio, 0, 0, channel_samples);
+    }
+  };
 
   // This is the place where you'd normally do the guts of your plugin's audio processing.
   // Make sure to reset the state if your inner loop is processing the samples
@@ -125,45 +150,37 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   // Alternatively, you can process the samples with the channels
   // interleaved by keeping the same state.
 
-  bool bypass = !core || !core->compatible(channel_samples);
-
-  if (!bypass)
+  if (state.bypass)
   {
-    for (int channel = 0; channel < std::min(input_channels, output_channels); ++channel)
-    {
-      const auto samples = static_cast<size_t>(channel_samples);
-
-      auto input  = std::span<float>(const_cast<float*>(audio.getReadPointer(channel)), samples);
-      auto output = std::span<float>(audio.getWritePointer(channel), samples);
-
-      try
-      {
-        core->process(input, output);
-      }
-      catch(const std::exception& exception)
-      {
-        bypass = true;
-
-        LOG(exception.what());
-      }
-    }
+    copy_input_to_output();
   }
-
-  if (bypass)
+  else if (!core)
   {
-    LOG("Bypass block");
-
-    for (int channel = 0; channel < std::min(input_channels, output_channels); ++channel)
+    copy_input_to_output("core is uninitialized");
+  }
+  else if (!core->compatible(channel_samples))
+  {
+    copy_input_to_output("core is incompatible");
+  }
+  else
+  {
+    try
     {
-      const auto samples = static_cast<size_t>(channel_samples);
+      auto input = std::span<float>(
+        const_cast<float*>(audio.getReadPointer(0)),
+        static_cast<size_t>(channel_samples));
 
-      auto input  = std::span<const float>(audio.getReadPointer(channel), samples);
-      auto output = std::span<float>(audio.getWritePointer(channel), samples);
+      auto output = std::span<float>(
+        audio.getWritePointer(0),
+        static_cast<size_t>(channel_samples));
 
-      for (size_t i = 0; i < samples; ++i)
-      {
-        output[i] = input[i];
-      }
+      core->process(input, output);
+
+      copy_input_to_output();
+    }
+    catch(const std::exception& exception)
+    {
+      copy_input_to_output(exception.what());
     }
   }
 }
@@ -175,6 +192,8 @@ void Processor::getStateInformation(juce::MemoryBlock& data)
   // as intermediaries to make it easy to save and load complex data.
 
   juce::ignoreUnused(data);
+
+  LOG("Get state information");
 }
 
 void Processor::setStateInformation(const void* data, int size)
@@ -183,6 +202,8 @@ void Processor::setStateInformation(const void* data, int size)
   // whose contents will have been created by the getStateInformation() call.
 
   juce::ignoreUnused(data, size);
+
+  LOG("Set state information");
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new Processor(); }

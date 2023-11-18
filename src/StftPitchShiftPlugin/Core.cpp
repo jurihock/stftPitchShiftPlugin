@@ -1,9 +1,9 @@
 #include <StftPitchShiftPlugin/Core.h>
 
-Core::Core(const double samplerate, const int framesize, const int dftsize, const int overlap)
+Core::Core(const double samplerate, const int blocksize, const int dftsize, const int overlap)
 {
   const auto analysis_window_size  = static_cast<size_t>(dftsize + dftsize);
-  const auto synthesis_window_size = static_cast<size_t>(framesize);
+  const auto synthesis_window_size = static_cast<size_t>(blocksize);
 
   const auto winsize = std::make_tuple(analysis_window_size, synthesis_window_size);
   const auto hopsize = synthesis_window_size / static_cast<size_t>(overlap);
@@ -24,7 +24,7 @@ Core::Core(const double samplerate, const int framesize, const int dftsize, cons
   // core->normalization(false);
 
   // preset: major chord with preserved timbre
-  core->factors({ 1, 1.25, 1.5, 2 });
+  core->factors({ 0.5, 1, 1.25, 1.5, 2 });
   core->quefrency(1 * 1e-3);
   core->distortion(1);
   core->normalization(true);
@@ -34,9 +34,9 @@ Core::~Core()
 {
 }
 
-bool Core::compatible(const int framesize) const
+bool Core::compatible(const int blocksize) const
 {
-  return framesize == config.synthesis_window_size;
+  return blocksize == config.synthesis_window_size;
 }
 
 void Core::process(const std::span<float> input, const std::span<float> output)
