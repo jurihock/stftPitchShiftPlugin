@@ -20,10 +20,15 @@ target_include_directories(${CMAKE_PROJECT_NAME}
   PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/..")
 
+file(
+  GLOB_RECURSE
+    HDR "${CMAKE_CURRENT_LIST_DIR}/*.h"
+    CPP "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
+
 target_sources(${CMAKE_PROJECT_NAME}
   PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/PluginEditor.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/PluginProcessor.cpp")
+    ${HDR}
+    ${CPP})
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
   PRIVATE

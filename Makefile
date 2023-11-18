@@ -17,4 +17,4 @@ app:
 	@open -n ./build/StftPitchShiftPlugin_artefacts/Release/Standalone/StftPitchShiftPlugin.app
 
 log:
-	@tail -f ~/Library/Logs/StftPitchShiftPlugin/StftPitchShiftPlugin.log
+	@tail -F ~/Library/Logs/StftPitchShiftPlugin/StftPitchShiftPlugin.log

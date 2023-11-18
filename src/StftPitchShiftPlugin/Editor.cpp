@@ -1,19 +1,19 @@
-#include <StftPitchShiftPlugin/PluginEditor.h>
+#include <StftPitchShiftPlugin/Editor.h>
 
-PluginEditor::PluginEditor(PluginProcessor& theprocess) :
-  AudioProcessorEditor(theprocess),
-  process(theprocess)
+Editor::Editor(Processor& _process_) :
+  AudioProcessorEditor(_process_),
+  process(_process_)
 {
   juce::ignoreUnused(process);
 
   setSize(400, 300);
 }
 
-PluginEditor::~PluginEditor()
+Editor::~Editor()
 {
 }
 
-void PluginEditor::paint(juce::Graphics& graphics)
+void Editor::paint(juce::Graphics& graphics)
 {
   graphics.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
   graphics.setColour(juce::Colours::white);
@@ -21,6 +21,6 @@ void PluginEditor::paint(juce::Graphics& graphics)
   graphics.drawFittedText("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
-void PluginEditor::resized()
+void Editor::resized()
 {
 }

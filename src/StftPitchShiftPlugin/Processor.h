@@ -2,13 +2,15 @@
 
 #include <JuceHeader.h>
 
-class PluginProcessor final : public juce::AudioProcessor
+#include <StftPitchShiftPlugin/Logger.h>
+
+class Processor final : public juce::AudioProcessor
 {
 
 public:
 
-  PluginProcessor();
-  ~PluginProcessor() override;
+  Processor();
+  ~Processor() override;
 
   const juce::String getName() const override;
 
@@ -37,6 +39,6 @@ public:
 
 private:
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginProcessor)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Processor)
 
 };
