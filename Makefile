@@ -7,7 +7,7 @@ help:
 	@echo log
 
 build:
-	@cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
+	@cmake -DCMAKE_BUILD_TYPE=Release -GNinja -S . -B build
 	@cmake --build build
 
 clean:
