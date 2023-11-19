@@ -44,10 +44,10 @@ private:
 
   std::unique_ptr<Parameters> parameters;
 
+  std::mutex mutex;
+
   struct
   {
-    bool bypass {false};
-
     int dftsize {1024};
     int overlap {4};
 

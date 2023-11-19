@@ -16,22 +16,30 @@ Core::Core(const double samplerate, const int blocksize, const int dftsize, cons
 
   stft = std::make_unique<STFT<double>>(winsize, hopsize);
   core = std::make_unique<StftPitchShiftCore<double>>(winsize, hopsize, samplerate);
-
-  // preset: neutral
-  // core->factors({ 1 });
-  // core->quefrency(0 * 1e-3);
-  // core->distortion(1);
-  // core->normalization(false);
-
-  // preset: major chord with preserved timbre
-  core->factors({ 0.5, 1, 1.25, 1.5, 2 });
-  core->quefrency(1 * 1e-3);
-  core->distortion(1);
-  core->normalization(true);
 }
 
 Core::~Core()
 {
+}
+
+void Core::normalize(bool value)
+{
+  core->normalization(value);
+}
+
+void Core::quefrency(double value)
+{
+  core->quefrency(value);
+}
+
+void Core::timbre(double value)
+{
+  core->distortion(value);
+}
+
+void Core::pitch(std::vector<double> values)
+{
+  core->factors(values);
 }
 
 bool Core::compatible(const int blocksize) const

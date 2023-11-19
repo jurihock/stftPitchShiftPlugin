@@ -10,22 +10,28 @@ Processor::Processor() :
 {
   parameters = std::make_unique<Parameters>(*this);
 
-  // TODO
-  parameters->onbypass([&]() { LOG("On bypass changed %d", parameters->bypass()); });
-  parameters->onnormalize([&]() { LOG("On normalize changed %d", parameters->normalize()); });
-  parameters->onquefrency([&]() { LOG("On quefrency changed %g", parameters->quefrency()); });
-  parameters->ontimbre([&]() { LOG("On timbre changed %g", parameters->timbre()); });
+  parameters->onnormalize([&]()
+  {
+    std::lock_guard lock(mutex);
+    if (core) { core->normalize(parameters->normalize()); }
+  });
+
+  parameters->onquefrency([&]()
+  {
+    std::lock_guard lock(mutex);
+    if (core) { core->quefrency(parameters->quefrency()); }
+  });
+
+  parameters->ontimbre([&]()
+  {
+    std::lock_guard lock(mutex);
+    if (core) { core->timbre(parameters->timbre()); }
+  });
+
   parameters->onpitch([&]()
   {
-    auto factors = parameters->pitch();
-    std::string buffer;
-
-    for (auto factor : factors)
-    {
-      buffer += std::to_string(factor) + " ";
-    }
-
-    LOG("On pitch changed %s", buffer.c_str());
+    std::lock_guard lock(mutex);
+    if (core) { core->pitch(parameters->pitch()); }
   });
 }
 
@@ -89,6 +95,8 @@ void Processor::setStateInformation(const void* data, int size)
 
 void Processor::prepareToPlay(double samplerate, int blocksize)
 {
+  std::lock_guard lock(mutex);
+
   state.samplerate = std::nullopt;
   state.blocksize  = std::nullopt;
 
@@ -118,6 +126,11 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
       state.blocksize.value(),
       state.dftsize,
       state.overlap);
+
+    core->normalize(parameters->normalize());
+    core->quefrency(parameters->quefrency());
+    core->timbre(parameters->timbre());
+    core->pitch(parameters->pitch());
   }
   catch(const std::exception& exception)
   {
@@ -127,6 +140,8 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
 
 void Processor::releaseResources()
 {
+  std::lock_guard lock(mutex);
+
   LOG("Release resources");
 
   state.samplerate = std::nullopt;
@@ -137,9 +152,11 @@ void Processor::releaseResources()
 
 void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& midi)
 {
+  juce::ignoreUnused(midi);
+
   juce::ScopedNoDenormals dontcare;
 
-  juce::ignoreUnused(midi);
+  std::lock_guard lock(mutex);
 
   const int input_channels  = getTotalNumInputChannels();
   const int output_channels = getTotalNumOutputChannels();
@@ -182,7 +199,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   // Alternatively, you can process the samples with the channels
   // interleaved by keeping the same state.
 
-  if (state.bypass)
+  if (parameters->bypass())
   {
     copy_input_to_output();
   }

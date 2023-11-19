@@ -13,6 +13,11 @@ public:
   Core(const double samplerate, const int blocksize, const int dftsize, const int overlap);
   ~Core();
 
+  void normalize(bool value);
+  void quefrency(double value);
+  void timbre(double value);
+  void pitch(std::vector<double> values);
+
   bool compatible(const int blocksize) const;
 
   void process(const std::span<float> input, const std::span<float> output);
