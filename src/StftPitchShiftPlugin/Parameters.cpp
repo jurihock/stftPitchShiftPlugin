@@ -16,12 +16,9 @@ Parameters::Parameters(juce::AudioProcessor& process) :
   process.addParameter(params.normalize);
 
   params.quefrency = new juce::AudioParameterFloat(
-    "quefrency", "Timbre quefrency milliseconds",
-    juce::NormalisableRange<float>(0.0f, 10.0f), 0.0f,
-    AudioParameterFloatAttributes()
-      .withLabel("ms")
-      .withStringFromValueFunction(
-        [](auto x, auto _){ return juce::String(std::round(x*10)/10); }));
+    "quefrency", "Timbre quefrency",
+    juce::NormalisableRange<float>(0.0f, 10.0f, 0.5f), 0.0f,
+    AudioParameterFloatAttributes().withLabel("ms"));
 
   process.addParameter(params.quefrency);
 
