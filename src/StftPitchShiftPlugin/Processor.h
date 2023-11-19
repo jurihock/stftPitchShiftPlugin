@@ -29,6 +29,7 @@ public:
   const juce::String getProgramName (int index) override;
 
   double getTailLengthSeconds() const override;
+  juce::AudioProcessorParameter* getBypassParameter() const override;
   bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
   void getStateInformation(juce::MemoryBlock& data) override;

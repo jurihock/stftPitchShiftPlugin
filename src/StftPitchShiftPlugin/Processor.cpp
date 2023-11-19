@@ -9,6 +9,24 @@ Processor::Processor() :
       .withOutput("Output", juce::AudioChannelSet::stereo(), true))
 {
   parameters = std::make_unique<Parameters>(*this);
+
+  // TODO
+  parameters->onbypass([&]() { LOG("On bypass changed %d", parameters->bypass()); });
+  parameters->onnormalize([&]() { LOG("On normalize changed %d", parameters->normalize()); });
+  parameters->onquefrency([&]() { LOG("On quefrency changed %g", parameters->quefrency()); });
+  parameters->ontimbre([&]() { LOG("On timbre changed %g", parameters->timbre()); });
+  parameters->onpitch([&]()
+  {
+    auto factors = parameters->pitch();
+    std::string buffer;
+
+    for (auto factor : factors)
+    {
+      buffer += std::to_string(factor) + " ";
+    }
+
+    LOG("On pitch changed %s", buffer.c_str());
+  });
 }
 
 Processor::~Processor()
@@ -34,6 +52,7 @@ void Processor::changeProgramName(int index, const juce::String& name) { juce::i
 const juce::String Processor::getProgramName(int index) { juce::ignoreUnused(index); return {}; }
 
 double Processor::getTailLengthSeconds() const { return 0; }
+juce::AudioProcessorParameter* Processor::getBypassParameter() const { return parameters->raw("bypass"); }
 
 bool Processor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
