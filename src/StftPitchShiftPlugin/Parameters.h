@@ -19,8 +19,14 @@ private:
 
   juce::AudioProcessor& process;
 
-  juce::AudioParameterBool*  bypass;
-  juce::AudioParameterFloat* quefrency;
-  juce::AudioParameterInt*   timbre;
+  struct
+  {
+    juce::AudioParameterBool*  bypass;
+    juce::AudioParameterBool*  normalize;
+    juce::AudioParameterFloat* quefrency;
+    juce::AudioParameterInt*   timbre;
+    std::array<juce::AudioParameterInt*, 5> pitch;
+  }
+  params;
 
 };

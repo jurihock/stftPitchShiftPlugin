@@ -5,20 +5,42 @@
 Parameters::Parameters(juce::AudioProcessor& process) :
   process(process)
 {
-  bypass = new juce::AudioParameterBool(
+  params.bypass = new juce::AudioParameterBool(
     "bypass", "Bypass pitch shifting", false);
 
-  process.addParameter(bypass);
+  process.addParameter(params.bypass);
 
-  quefrency = new juce::AudioParameterFloat(
-    "quefrency", "Quefrency milliseconds", 0.0f, 10.0f, 0.0f);
+  params.normalize = new juce::AudioParameterBool(
+    "normalize", "Normalize output", false);
 
-  process.addParameter(quefrency);
+  process.addParameter(params.normalize);
 
-  timbre = new juce::AudioParameterInt(
-    "timbre", "Timbre shifting semitones", -12, +12, 0);
+  params.quefrency = new juce::AudioParameterFloat(
+    "quefrency", "Timbre quefrency milliseconds",
+    juce::NormalisableRange<float>(0.0f, 10.0f), 0.0f,
+    AudioParameterFloatAttributes()
+      .withLabel("ms")
+      .withStringFromValueFunction(
+        [](auto x, auto _){ return juce::String(std::round(x*10)/10); }));
 
-  process.addParameter(timbre);
+  process.addParameter(params.quefrency);
+
+  params.timbre = new juce::AudioParameterInt(
+    "timbre", "Timbre shift", -12, +12, 0,
+    AudioParameterIntAttributes().withLabel("st"));
+
+  process.addParameter(params.timbre);
+
+  for (size_t i = 0; i < params.pitch.size(); ++i)
+  {
+    const auto j = std::to_string(i + 1);
+
+    params.pitch[i] = new juce::AudioParameterInt(
+      "pitch" + j, "Pitch shift " + j, -12, +12, 0,
+      AudioParameterIntAttributes().withLabel("st"));
+
+    process.addParameter(params.pitch[i]);
+  }
 }
 
 Parameters::~Parameters()
@@ -50,9 +72,15 @@ void Parameters::write(juce::MemoryBlock& data)
 
   xml->setAttribute("schema", schema);
 
-  write_bool_value(xml.get(), bypass);
-  write_float_value(xml.get(), quefrency);
-  write_int_value(xml.get(), timbre);
+  write_bool_value(xml.get(), params.bypass);
+  write_bool_value(xml.get(), params.normalize);
+  write_float_value(xml.get(), params.quefrency);
+  write_int_value(xml.get(), params.timbre);
+
+  for (size_t i = 0; i < params.pitch.size(); ++i)
+  {
+    write_int_value(xml.get(), params.pitch[i]);
+  }
 
   LOG(xml->toString(juce::XmlElement::TextFormat().withoutHeader()));
 
@@ -104,7 +132,13 @@ void Parameters::read(const void* data, const int size)
   if (xml->hasTagName("StftPitchShiftPlugin") == false) { return; }
   if (xml->getIntAttribute("schema") != schema) { return; }
 
-  *bypass = read_bool_value(xml.get(), bypass);
-  *quefrency = read_float_value(xml.get(), quefrency);
-  *timbre = read_int_value(xml.get(), timbre);
+  *params.bypass = read_bool_value(xml.get(), params.bypass);
+  *params.normalize = read_bool_value(xml.get(), params.normalize);
+  *params.quefrency = read_float_value(xml.get(), params.quefrency);
+  *params.timbre = read_int_value(xml.get(), params.timbre);
+
+  for (size_t i = 0; i < params.pitch.size(); ++i)
+  {
+    *params.pitch[i] = read_int_value(xml.get(), params.pitch[i]);
+  }
 }
