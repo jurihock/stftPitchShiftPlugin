@@ -6,7 +6,6 @@ Editor::Editor(juce::AudioProcessor& process) :
   GenericAudioProcessorEditor(process),
   process(process)
 {
-  setSize(400, 300);
 }
 
 Editor::~Editor()
