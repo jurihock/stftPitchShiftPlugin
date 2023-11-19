@@ -2,22 +2,17 @@
 
 #include <JuceHeader.h>
 
-#include <StftPitchShiftPlugin/Processor.h>
-
-class Editor final : public juce::AudioProcessorEditor
+class Editor final : public juce::GenericAudioProcessorEditor
 {
 
 public:
 
-  explicit Editor(Processor& process);
+  explicit Editor(juce::AudioProcessor& process);
   ~Editor() override;
-
-  void paint(juce::Graphics& graphics) override;
-  void resized() override;
 
 private:
 
-  Processor& process;
+  juce::AudioProcessor& process;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Editor)
 

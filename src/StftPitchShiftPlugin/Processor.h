@@ -3,7 +3,9 @@
 #include <JuceHeader.h>
 
 #include <StftPitchShiftPlugin/Core.h>
+#include <StftPitchShiftPlugin/Editor.h>
 #include <StftPitchShiftPlugin/Logger.h>
+#include <StftPitchShiftPlugin/Parameters.h>
 
 class Processor final : public juce::AudioProcessor
 {
@@ -30,15 +32,17 @@ public:
   double getTailLengthSeconds() const override;
   bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
+  void getStateInformation(juce::MemoryBlock& data) override;
+  void setStateInformation(const void* data, int size) override;
+
   void prepareToPlay(double samplerate, int blocksize) override;
   void releaseResources() override;
 
   void processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& midi) override;
 
-  void getStateInformation(juce::MemoryBlock& data) override;
-  void setStateInformation(const void* data, int size) override;
-
 private:
+
+  std::unique_ptr<Parameters> parameters;
 
   struct
   {

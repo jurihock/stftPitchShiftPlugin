@@ -1,13 +1,12 @@
 #include <StftPitchShiftPlugin/Processor.h>
 
-#include <StftPitchShiftPlugin/Editor.h>
-
 Processor::Processor() :
   AudioProcessor(
     BusesProperties()
       .withInput("Input",   juce::AudioChannelSet::mono(),   true)
       .withOutput("Output", juce::AudioChannelSet::stereo(), true))
 {
+  parameters = std::make_unique<Parameters>(*this);
 }
 
 Processor::~Processor()
@@ -53,6 +52,20 @@ bool Processor::isBusesLayoutSupported(const BusesLayout& layouts) const
   return true;
 }
 
+void Processor::getStateInformation(juce::MemoryBlock& data)
+{
+  LOG("Write plugin state");
+
+  parameters->write(data);
+}
+
+void Processor::setStateInformation(const void* data, int size)
+{
+  LOG("Read plugin state");
+
+  parameters->read(data, size);
+}
+
 void Processor::prepareToPlay(double samplerate, int blocksize)
 {
   state.samplerate = std::nullopt;
@@ -93,8 +106,6 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
 
 void Processor::releaseResources()
 {
-  // When playback stops, you can use this as an opportunity to free up any spare memory, etc.
-
   LOG("Release resources");
 
   state.samplerate = std::nullopt;
@@ -183,27 +194,6 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
       copy_input_to_output(exception.what());
     }
   }
-}
-
-void Processor::getStateInformation(juce::MemoryBlock& data)
-{
-  // You should use this method to store your parameters in the memory block.
-  // You could do that either as raw data, or use the XML or ValueTree classes
-  // as intermediaries to make it easy to save and load complex data.
-
-  juce::ignoreUnused(data);
-
-  LOG("Get state information");
-}
-
-void Processor::setStateInformation(const void* data, int size)
-{
-  // You should use this method to restore your parameters from this memory block,
-  // whose contents will have been created by the getStateInformation() call.
-
-  juce::ignoreUnused(data, size);
-
-  LOG("Set state information");
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new Processor(); }

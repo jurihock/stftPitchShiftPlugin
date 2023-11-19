@@ -6,8 +6,6 @@
 
   #include <JuceHeader.h>
 
-  #include <utility>
-
   static FileLogger* plugin_file_logger = FileLogger::createDefaultAppLogger(
     "StftPitchShiftPlugin", "StftPitchShiftPlugin.log", "");
 
