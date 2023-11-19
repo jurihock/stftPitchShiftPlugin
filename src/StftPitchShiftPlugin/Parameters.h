@@ -10,8 +10,8 @@ public:
   explicit Parameters(juce::AudioProcessor& process);
   ~Parameters();
 
-  void write(juce::MemoryBlock& data);
   void read(const void* data, const int size);
+  void write(juce::MemoryBlock& data);
 
 private:
 

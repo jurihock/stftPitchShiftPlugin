@@ -1,5 +1,7 @@
 #include <StftPitchShiftPlugin/Processor.h>
 
+#include <StftPitchShiftPlugin/Logger.h>
+
 Processor::Processor() :
   AudioProcessor(
     BusesProperties()

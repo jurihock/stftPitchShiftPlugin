@@ -4,7 +4,6 @@
 
 #include <StftPitchShiftPlugin/Core.h>
 #include <StftPitchShiftPlugin/Editor.h>
-#include <StftPitchShiftPlugin/Logger.h>
 #include <StftPitchShiftPlugin/Parameters.h>
 
 class Processor final : public juce::AudioProcessor
