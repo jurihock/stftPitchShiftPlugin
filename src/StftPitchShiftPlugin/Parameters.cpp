@@ -21,7 +21,7 @@ Parameters::Parameters(juce::AudioProcessor& process) :
     "timbre", "Timbre shift", -12, +12, 0,
     AudioParameterIntAttributes().withLabel("st")));
 
-  for (size_t i = 0; i < stages; ++i)
+  for (size_t i = 0; i < maxstages; ++i)
   {
     const auto j = std::to_string(i + 1);
 
@@ -29,6 +29,9 @@ Parameters::Parameters(juce::AudioProcessor& process) :
       "pitch" + j, "Pitch shift " + j, -12, +12, 0,
       AudioParameterIntAttributes().withLabel("st")));
   }
+
+  parameters.add("pitch", new juce::AudioParameterInt(
+    "stages", "Pitch stages", 1, maxstages, maxstages));
 }
 
 Parameters::~Parameters()
@@ -96,7 +99,7 @@ std::vector<double> Parameters::pitch() const
 {
   std::set<double> factors;
 
-  for (size_t i = 0; i < stages; ++i)
+  for (size_t i = 0; i < parameters.get<int>("stages"); ++i)
   {
     const auto j = std::to_string(i + 1);
 
@@ -133,12 +136,14 @@ void Parameters::read(const void* data, const int size)
     parameters.read<float>("quefrency", *xml);
     parameters.read<int>("timbre", *xml);
 
-    for (size_t i = 0; i < stages; ++i)
+    for (size_t i = 0; i < maxstages; ++i)
     {
       const auto j = std::to_string(i + 1);
 
       parameters.read<int>("pitch" + j, *xml);
     }
+
+    parameters.read<int>("stages", *xml);
   }
   catch(const std::exception& exception)
   {
@@ -159,12 +164,14 @@ void Parameters::write(juce::MemoryBlock& data)
     parameters.write<float>("quefrency", *xml);
     parameters.write<int>("timbre", *xml);
 
-    for (size_t i = 0; i < stages; ++i)
+    for (size_t i = 0; i < maxstages; ++i)
     {
       const auto j = std::to_string(i + 1);
 
       parameters.write<int>("pitch" + j, *xml);
     }
+
+    parameters.write<int>("stages", *xml);
 
     LOG(xml->toString(juce::XmlElement::TextFormat().withoutHeader()));
 
