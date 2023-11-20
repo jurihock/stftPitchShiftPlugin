@@ -11,7 +11,7 @@ Key features:
 - low latency capability depending on the preset block size
 - optional output normalization to match the input loudness level
 
-These are the current options, which can be changed on the fly:
+These are the current options, which can be adjusted on the fly:
 
 <img src="assets/screenshot.png" width="500">
 
