@@ -14,7 +14,7 @@ Parameters::Parameters(juce::AudioProcessor& process) :
 
   parameters.add("quefrency", new juce::AudioParameterFloat(
     { "quefrency", schema }, "Timbre quefrency",
-    juce::NormalisableRange<float>(0.0f, 10.0f, 0.5f), 0.0f,
+    juce::NormalisableRange<float>(0.0f, 3.0f, 0.001f, 0.5f), 0.0f,
     AudioParameterFloatAttributes().withLabel("ms")));
 
   parameters.add("timbre", new juce::AudioParameterInt(
