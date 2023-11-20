@@ -7,18 +7,18 @@ Parameters::Parameters(juce::AudioProcessor& process) :
   parameters(process)
 {
   parameters.add("bypass", new juce::AudioParameterBool(
-    "bypass", "Bypass pitch shifting", false));
+    { "bypass", schema }, "Bypass pitch shifting", false));
 
   parameters.add("normalize", new juce::AudioParameterBool(
-    "normalize", "Normalize output", false));
+    { "normalize", schema }, "Normalize output", false));
 
   parameters.add("quefrency", new juce::AudioParameterFloat(
-    "quefrency", "Timbre quefrency",
+    { "quefrency", schema }, "Timbre quefrency",
     juce::NormalisableRange<float>(0.0f, 10.0f, 0.5f), 0.0f,
     AudioParameterFloatAttributes().withLabel("ms")));
 
   parameters.add("timbre", new juce::AudioParameterInt(
-    "timbre", "Timbre shift", -12, +12, 0,
+    { "timbre", schema }, "Timbre shift", -12, +12, 0,
     AudioParameterIntAttributes().withLabel("st")));
 
   for (size_t i = 0; i < maxstages; ++i)
@@ -26,12 +26,12 @@ Parameters::Parameters(juce::AudioProcessor& process) :
     const auto j = std::to_string(i + 1);
 
     parameters.add("pitch", new juce::AudioParameterInt(
-      "pitch" + j, "Pitch shift " + j, -12, +12, 0,
+      { "pitch" + j, schema }, "Pitch shift " + j, -12, +12, 0,
       AudioParameterIntAttributes().withLabel("st")));
   }
 
   parameters.add("pitch", new juce::AudioParameterInt(
-    "stages", "Pitch stages", 1, maxstages, maxstages));
+    { "stages", schema }, "Pitch stages", 1, maxstages, maxstages));
 }
 
 Parameters::~Parameters()
