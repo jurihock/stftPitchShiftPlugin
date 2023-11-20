@@ -174,20 +174,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
     return;
   }
 
-  auto copy_input_to_output = [&](const std::string& reason = "")
-  {
-    if (!reason.empty())
-    {
-      LOG("Copy input to output (%s)", reason.c_str());
-    }
-
-    for (int channel = 1; channel < output_channels; ++channel)
-    {
-      audio.copyFrom(channel, 0, audio, 0, 0, channel_samples);
-    }
-  };
-
-  auto process_input_mono = [&]()
+  const auto process_mono_input = [&]()
   {
     auto input = std::span<float>(
       const_cast<float*>(audio.getReadPointer(0)),
@@ -200,13 +187,26 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
     core->process(input, output);
   };
 
+  const auto process_stereo_output = [&](const std::string& error = "")
+  {
+    if (!error.empty())
+    {
+      LOG("Copy input to output (%s)", error.c_str());
+    }
+
+    for (int channel = 1; channel < output_channels; ++channel)
+    {
+      audio.copyFrom(channel, 0, audio, 0, 0, channel_samples);
+    }
+  };
+
   if (parameters->bypass())
   {
-    copy_input_to_output();
+    process_stereo_output();
   }
   else if (!core)
   {
-    copy_input_to_output("core is uninitialized");
+    process_stereo_output("core is not initialized");
   }
   else
   {
@@ -214,12 +214,12 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
     {
       try
       {
-        process_input_mono();
-        copy_input_to_output();
+        process_mono_input();
+        process_stereo_output();
       }
       catch(const std::exception& exception)
       {
-        copy_input_to_output(exception.what());
+        process_stereo_output(exception.what());
       }
     }
     else
@@ -244,12 +244,12 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
         state.blocksize = blocksize1;
 
-        process_input_mono();
-        copy_input_to_output();
+        process_mono_input();
+        process_stereo_output();
       }
       catch(const std::exception& exception)
       {
-        copy_input_to_output(exception.what());
+        process_stereo_output(exception.what());
       }
     }
   }
