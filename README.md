@@ -1,6 +1,6 @@
 # Official JUCE plugin for stftPitchShift
 
-The *stftPitchShiftPlugin* features poly pitch and timbre shifting simultaneously and in real time.
+The *stftPitchShiftPlugin* features poly pitch and timbre shifting simultaneously and in real-time.
 It's completely based on the [stftPitchShift](https://github.com/jurihock/stftPitchShift) library,
 which also provides a Python interface and useful command line tools.
 
