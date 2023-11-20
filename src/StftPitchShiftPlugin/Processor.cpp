@@ -208,49 +208,46 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   {
     process_stereo_output("core is not initialized");
   }
+  else if (!core->compatible(channel_samples))
+  {
+    const auto blocksize0 = state.blocksize.value();
+    const auto blocksize1 = channel_samples;
+
+    LOG("Change block size from %d to %d", blocksize0, blocksize1);
+
+    try
+    {
+      core = std::make_unique<Core>(
+        state.samplerate.value(),
+        blocksize1,
+        state.dftsize,
+        state.overlap);
+
+      core->normalize(parameters->normalize());
+      core->quefrency(parameters->quefrency());
+      core->timbre(parameters->timbre());
+      core->pitch(parameters->pitch());
+
+      state.blocksize = blocksize1;
+
+      process_mono_input();
+      process_stereo_output();
+    }
+    catch(const std::exception& exception)
+    {
+      process_stereo_output(exception.what());
+    }
+  }
   else
   {
-    if (core->compatible(channel_samples))
+    try
     {
-      try
-      {
-        process_mono_input();
-        process_stereo_output();
-      }
-      catch(const std::exception& exception)
-      {
-        process_stereo_output(exception.what());
-      }
+      process_mono_input();
+      process_stereo_output();
     }
-    else
+    catch(const std::exception& exception)
     {
-      const auto blocksize0 = state.blocksize.value();
-      const auto blocksize1 = channel_samples;
-
-      LOG("Change block size from %d to %d", blocksize0, blocksize1);
-
-      try
-      {
-        core = std::make_unique<Core>(
-          state.samplerate.value(),
-          blocksize1,
-          state.dftsize,
-          state.overlap);
-
-        core->normalize(parameters->normalize());
-        core->quefrency(parameters->quefrency());
-        core->timbre(parameters->timbre());
-        core->pitch(parameters->pitch());
-
-        state.blocksize = blocksize1;
-
-        process_mono_input();
-        process_stereo_output();
-      }
-      catch(const std::exception& exception)
-      {
-        process_stereo_output(exception.what());
-      }
+      process_stereo_output(exception.what());
     }
   }
 }
