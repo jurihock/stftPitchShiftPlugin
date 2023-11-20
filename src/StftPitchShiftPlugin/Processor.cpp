@@ -5,7 +5,7 @@
 Processor::Processor() :
   AudioProcessor(
     BusesProperties()
-      .withInput("Input",   juce::AudioChannelSet::mono(),   true)
+      .withInput("Input",   juce::AudioChannelSet::stereo(), true)
       .withOutput("Output", juce::AudioChannelSet::stereo(), true))
 {
   parameters = std::make_unique<Parameters>(*this);
@@ -62,18 +62,12 @@ juce::AudioProcessorParameter* Processor::getBypassParameter() const { return pa
 
 bool Processor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
-  // This is the place where you check if the layout is supported.
-  // In this template code we only support mono or stereo.
-  // Some plugin hosts, such as certain GarageBand versions,
-  // will only load plugins that support stereo bus layouts.
+  if (layouts.getMainInputChannelSet() != juce::AudioChannelSet::mono() &&
+      layouts.getMainInputChannelSet() != juce::AudioChannelSet::stereo())
+    return false;
 
   if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono() &&
       layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-    return false;
-
-  // This checks if the input layout matches the output layout.
-
-  if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
     return false;
 
   return true;
@@ -193,11 +187,18 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
     }
   };
 
-  // This is the place where you'd normally do the guts of your plugin's audio processing.
-  // Make sure to reset the state if your inner loop is processing the samples
-  // and the outer loop is handling the channels.
-  // Alternatively, you can process the samples with the channels
-  // interleaved by keeping the same state.
+  auto process_input_mono = [&]()
+  {
+    auto input = std::span<float>(
+      const_cast<float*>(audio.getReadPointer(0)),
+      static_cast<size_t>(channel_samples));
+
+    auto output = std::span<float>(
+      audio.getWritePointer(0),
+      static_cast<size_t>(channel_samples));
+
+    core->process(input, output);
+  };
 
   if (parameters->bypass())
   {
@@ -207,29 +208,49 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   {
     copy_input_to_output("core is uninitialized");
   }
-  else if (!core->compatible(channel_samples))
-  {
-    copy_input_to_output("core is incompatible");
-  }
   else
   {
-    try
+    if (core->compatible(channel_samples))
     {
-      auto input = std::span<float>(
-        const_cast<float*>(audio.getReadPointer(0)),
-        static_cast<size_t>(channel_samples));
-
-      auto output = std::span<float>(
-        audio.getWritePointer(0),
-        static_cast<size_t>(channel_samples));
-
-      core->process(input, output);
-
-      copy_input_to_output();
+      try
+      {
+        process_input_mono();
+        copy_input_to_output();
+      }
+      catch(const std::exception& exception)
+      {
+        copy_input_to_output(exception.what());
+      }
     }
-    catch(const std::exception& exception)
+    else
     {
-      copy_input_to_output(exception.what());
+      const auto blocksize0 = state.blocksize.value();
+      const auto blocksize1 = channel_samples;
+
+      LOG("Change block size from %d to %d", blocksize0, blocksize1);
+
+      try
+      {
+        core = std::make_unique<Core>(
+          state.samplerate.value(),
+          blocksize1,
+          state.dftsize,
+          state.overlap);
+
+        core->normalize(parameters->normalize());
+        core->quefrency(parameters->quefrency());
+        core->timbre(parameters->timbre());
+        core->pitch(parameters->pitch());
+
+        state.blocksize = blocksize1;
+
+        process_input_mono();
+        copy_input_to_output();
+      }
+      catch(const std::exception& exception)
+      {
+        copy_input_to_output(exception.what());
+      }
     }
   }
 }
