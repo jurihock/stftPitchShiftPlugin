@@ -32,7 +32,7 @@ public:
 private:
 
   const int schema = 1;
-  const size_t maxstages = 5;
+  const int maxstages = 5;
 
   juce::AudioProcessor& process;
 

@@ -21,7 +21,7 @@ Parameters::Parameters(juce::AudioProcessor& process) :
     { "timbre", schema }, "Timbre shift", -12, +12, 0,
     AudioParameterIntAttributes().withLabel("st")));
 
-  for (size_t i = 0; i < maxstages; ++i)
+  for (int i = 0; i < maxstages; ++i)
   {
     const auto j = std::to_string(i + 1);
 
@@ -99,7 +99,7 @@ std::vector<double> Parameters::pitch() const
 {
   std::set<double> factors;
 
-  for (size_t i = 0; i < parameters.get<int>("stages"); ++i)
+  for (int i = 0; i < std::min(parameters.get<int>("stages"), maxstages); ++i)
   {
     const auto j = std::to_string(i + 1);
 
@@ -136,7 +136,7 @@ void Parameters::read(const void* data, const int size)
     parameters.read<float>("quefrency", *xml);
     parameters.read<int>("timbre", *xml);
 
-    for (size_t i = 0; i < maxstages; ++i)
+    for (int i = 0; i < maxstages; ++i)
     {
       const auto j = std::to_string(i + 1);
 
@@ -164,7 +164,7 @@ void Parameters::write(juce::MemoryBlock& data)
     parameters.write<float>("quefrency", *xml);
     parameters.write<int>("timbre", *xml);
 
-    for (size_t i = 0; i < maxstages; ++i)
+    for (int i = 0; i < maxstages; ++i)
     {
       const auto j = std::to_string(i + 1);
 
