@@ -257,7 +257,10 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   if (LAP())
   {
-    LOG(CHRONOMETRY());
+    const auto samplerate = state.samplerate.value_or(0);
+    const auto blocksize  = state.blocksize.value_or(0);
+
+    LOG(CHRONOMETRY(samplerate, blocksize));
   }
 }
 
