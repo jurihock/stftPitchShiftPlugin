@@ -200,6 +200,8 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
     }
   };
 
+  TIC();
+
   if (parameters->bypass())
   {
     process_stereo_output();
@@ -249,6 +251,13 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
     {
       process_stereo_output(exception.what());
     }
+  }
+
+  TOC();
+
+  if (LAP())
+  {
+    LOG(CHRONOLOG());
   }
 }
 
