@@ -8,14 +8,16 @@ Core::Core(const double samplerate, const int blocksize, const int dftsize, cons
   const auto winsize = std::make_tuple(analysis_window_size, synthesis_window_size);
   const auto hopsize = synthesis_window_size / static_cast<size_t>(overlap);
 
+  const auto fft = std::make_shared<FFT>();
+
   config.analysis_window_size = analysis_window_size;
   config.synthesis_window_size = synthesis_window_size;
 
   buffer.input.resize(analysis_window_size + synthesis_window_size);
   buffer.output.resize(analysis_window_size + synthesis_window_size);
 
-  stft = std::make_unique<STFT<double>>(winsize, hopsize);
-  core = std::make_unique<StftPitchShiftCore<double>>(winsize, hopsize, samplerate);
+  stft = std::make_unique<stftpitchshift::STFT<double>>(fft, winsize, hopsize);
+  core = std::make_unique<stftpitchshift::StftPitchShiftCore<double>>(fft, winsize, hopsize, samplerate);
 }
 
 Core::~Core()

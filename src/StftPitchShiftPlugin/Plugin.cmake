@@ -33,6 +33,7 @@ target_sources(${CMAKE_PROJECT_NAME}
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
   PRIVATE
+    pocketfft
     stftpitchshift)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}

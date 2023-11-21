@@ -16,6 +16,7 @@ endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/lib/CPM.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/JUCE.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/lib/PocketFFT.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/StftPitchShift.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/src/StftPitchShiftPlugin/Plugin.cmake")

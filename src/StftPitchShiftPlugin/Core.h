@@ -1,9 +1,9 @@
 #pragma once
 
+#include <StftPitchShiftPlugin/FFT.h>
+
 #include <StftPitchShift/STFT.h>
 #include <StftPitchShift/StftPitchShiftCore.h>
-
-using namespace stftpitchshift;
 
 class Core final
 {
@@ -27,7 +27,7 @@ private:
   struct { size_t analysis_window_size, synthesis_window_size; } config;
   struct { std::vector<double> input, output; } buffer;
 
-  std::unique_ptr<STFT<double>> stft;
-  std::unique_ptr<StftPitchShiftCore<double>> core;
+  std::unique_ptr<stftpitchshift::STFT<double>> stft;
+  std::unique_ptr<stftpitchshift::StftPitchShiftCore<double>> core;
 
 };
