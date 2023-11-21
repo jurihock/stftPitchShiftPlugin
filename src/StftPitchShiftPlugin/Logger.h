@@ -1,8 +1,8 @@
 #pragma once
 
-#define ENABLE_PLUGIN_FILE_LOGGER
+#define ENABLE_PLUGIN_LOGGER
 
-#if defined(ENABLE_PLUGIN_FILE_LOGGER)
+#if defined(ENABLE_PLUGIN_LOGGER)
 
   #include <JuceHeader.h>
 

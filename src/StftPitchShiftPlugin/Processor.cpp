@@ -257,7 +257,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   if (LAP())
   {
-    LOG(CHRONOLOG());
+    LOG(CHRONOMETRY());
   }
 }
 
