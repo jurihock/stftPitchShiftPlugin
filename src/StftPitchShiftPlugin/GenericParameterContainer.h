@@ -116,7 +116,7 @@ public:
   {
     auto* parameter = dynamic_cast<juce::AudioParameterChoice*>(parameters.at(id));
 
-    const StringArray& choices = parameter->choices;
+    const juce::StringArray& choices = parameter->choices;
     const int index = choices.indexOf(value, true);
 
     if (index >= 0)

@@ -4,7 +4,7 @@
 
   #include <JuceHeader.h>
 
-  static FileLogger* plugin_file_logger = FileLogger::createDefaultAppLogger(
+  static juce::FileLogger* plugin_file_logger = juce::FileLogger::createDefaultAppLogger(
     "StftPitchShiftPlugin", "StftPitchShiftPlugin.log", "");
 
   template<typename... Args>
