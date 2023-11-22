@@ -7,19 +7,21 @@ Parameters::Parameters(juce::AudioProcessor& process) :
   parameters(process)
 {
   parameters.add("bypass", new juce::AudioParameterBool(
-    { "bypass", schema }, "Bypass pitch shifting", false));
+    { "bypass", schema }, "Bypass pitch shifting", false,
+    juce::AudioParameterBoolAttributes()));
 
   parameters.add("normalize", new juce::AudioParameterBool(
-    { "normalize", schema }, "Normalize output", false));
+    { "normalize", schema }, "Normalize output", false,
+    juce::AudioParameterBoolAttributes()));
 
   parameters.add("quefrency", new juce::AudioParameterFloat(
     { "quefrency", schema }, "Timbre quefrency",
     juce::NormalisableRange<float>(0.0f, 3.0f, 0.001f, 0.5f), 0.0f,
-    AudioParameterFloatAttributes().withLabel("ms")));
+    juce::AudioParameterFloatAttributes().withLabel("ms")));
 
   parameters.add("timbre", new juce::AudioParameterInt(
     { "timbre", schema }, "Timbre shift", -12, +12, 0,
-    AudioParameterIntAttributes().withLabel("st")));
+    juce::AudioParameterIntAttributes().withLabel("st")));
 
   for (int i = 0; i < maxstages; ++i)
   {
@@ -27,11 +29,19 @@ Parameters::Parameters(juce::AudioProcessor& process) :
 
     parameters.add("pitch", new juce::AudioParameterInt(
       { "pitch" + j, schema }, "Pitch shift " + j, -12, +12, 0,
-      AudioParameterIntAttributes().withLabel("st")));
+      juce::AudioParameterIntAttributes().withLabel("st")));
   }
 
   parameters.add("pitch", new juce::AudioParameterInt(
     { "stages", schema }, "Pitch stages", 1, maxstages, maxstages));
+
+  parameters.add("reset", new juce::AudioParameterChoice(
+    { "ola", schema }, "STFT overlap", { "4", "8", "16", "32", "64" }, 0,
+    juce::AudioParameterChoiceAttributes()));
+
+  parameters.add("reset", new juce::AudioParameterChoice(
+    { "dft", schema }, "DFT size", { "1024", "2048", "4096" }, 0,
+    juce::AudioParameterChoiceAttributes()));
 }
 
 Parameters::~Parameters()
@@ -62,6 +72,11 @@ void Parameters::ontimbre(std::function<void()> callback)
 void Parameters::onpitch(std::function<void()> callback)
 {
   parameters.call("pitch", callback);
+}
+
+void Parameters::onreset(std::function<void()> callback)
+{
+  parameters.call("reset", callback);
 }
 
 juce::AudioProcessorParameter* Parameters::raw(const std::string& id) const
@@ -112,6 +127,30 @@ std::vector<double> Parameters::pitch() const
   return std::vector<double>(factors.begin(), factors.end());
 }
 
+int Parameters::dftsize(const int blocksize) const
+{
+  const int dftsize = std::stoi(parameters.get<std::string>("dft"));
+
+  if (blocksize >= dftsize)
+  {
+    LOG("TODO dftsize");
+  }
+
+  return dftsize;
+}
+
+int Parameters::overlap(const int blocksize) const
+{
+  const int overlap = std::stoi(parameters.get<std::string>("ola"));
+
+  if (blocksize <= overlap)
+  {
+    LOG("TODO overlap");
+  }
+
+  return overlap;
+}
+
 void Parameters::read(const void* data, const int size)
 {
   try
@@ -144,6 +183,8 @@ void Parameters::read(const void* data, const int size)
     }
 
     parameters.read<int>("stages", *xml);
+    parameters.read<std::string>("ola", *xml);
+    parameters.read<std::string>("dft", *xml);
   }
   catch(const std::exception& exception)
   {
@@ -172,6 +213,8 @@ void Parameters::write(juce::MemoryBlock& data)
     }
 
     parameters.write<int>("stages", *xml);
+    parameters.write<std::string>("ola", *xml);
+    parameters.write<std::string>("dft", *xml);
 
     LOG(xml->toString(juce::XmlElement::TextFormat().withoutHeader()));
 

@@ -43,21 +43,20 @@ public:
 
 private:
 
-  std::unique_ptr<Parameters> parameters;
+  struct State
+  {
+    double samplerate {};
+    int    blocksize  {};
+  };
+
+  const State nostate;
 
   std::mutex mutex;
-
-  struct
-  {
-    int dftsize {1024};
-    int overlap {4};
-
-    std::optional<double> samplerate {std::nullopt};
-    std::optional<int>    blocksize  {std::nullopt};
-  }
-  state;
-
+  std::optional<State> state;
   std::unique_ptr<Core> core;
+  std::unique_ptr<Parameters> parameters;
+
+  void resetCore(const double samplerate, const int blocksize);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Processor)
 

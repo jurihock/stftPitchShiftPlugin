@@ -33,6 +33,12 @@ Processor::Processor() :
     std::lock_guard lock(mutex);
     if (core) { core->pitch(parameters->pitch()); }
   });
+
+  parameters->onreset([&]()
+  {
+    std::lock_guard lock(mutex);
+    if (state) { resetCore(state.value().samplerate, state.value().blocksize); }
+  });
 }
 
 Processor::~Processor()
@@ -91,9 +97,7 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
 {
   std::lock_guard lock(mutex);
 
-  state.samplerate = std::nullopt;
-  state.blocksize  = std::nullopt;
-
+  state = std::nullopt;
   core = nullptr;
 
   if (samplerate < 1)
@@ -110,21 +114,11 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
 
   LOG("Prepare to play (samplerate %g, blocksize %d)", samplerate, blocksize);
 
-  state.samplerate = samplerate;
-  state.blocksize  = blocksize;
+  state = { samplerate, blocksize };
 
   try
   {
-    core = std::make_unique<Core>(
-      state.samplerate.value(),
-      state.blocksize.value(),
-      state.dftsize,
-      state.overlap);
-
-    core->normalize(parameters->normalize());
-    core->quefrency(parameters->quefrency());
-    core->timbre(parameters->timbre());
-    core->pitch(parameters->pitch());
+    resetCore(samplerate, blocksize);
   }
   catch(const std::exception& exception)
   {
@@ -138,9 +132,7 @@ void Processor::releaseResources()
 
   LOG("Release resources");
 
-  state.samplerate = std::nullopt;
-  state.blocksize  = std::nullopt;
-
+  state = std::nullopt;
   core = nullptr;
 }
 
@@ -206,31 +198,28 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   {
     process_stereo_output();
   }
+  else if (!state)
+  {
+    process_stereo_output("state is not initialized");
+  }
   else if (!core)
   {
     process_stereo_output("core is not initialized");
   }
   else if (!core->compatible(channel_samples))
   {
-    const auto blocksize0 = state.blocksize.value();
-    const auto blocksize1 = channel_samples;
+    const double samplerate = state.value().samplerate;
+
+    const int blocksize0 = state.value().blocksize;
+    const int blocksize1 = channel_samples;
 
     LOG("Change block size from %d to %d", blocksize0, blocksize1);
 
     try
     {
-      core = std::make_unique<Core>(
-        state.samplerate.value(),
-        blocksize1,
-        state.dftsize,
-        state.overlap);
+      resetCore(samplerate, blocksize1);
 
-      core->normalize(parameters->normalize());
-      core->quefrency(parameters->quefrency());
-      core->timbre(parameters->timbre());
-      core->pitch(parameters->pitch());
-
-      state.blocksize = blocksize1;
+      state = { samplerate, blocksize1 };
 
       process_mono_input();
       process_stereo_output();
@@ -257,11 +246,27 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   if (LAP())
   {
-    const auto samplerate = state.samplerate.value_or(0);
-    const auto blocksize  = state.blocksize.value_or(0);
+    const double samplerate = state.value_or(nostate).samplerate;
+    const int blocksize  = state.value_or(nostate).blocksize;
 
     LOG(CHRONOMETRY(samplerate, blocksize));
   }
+}
+
+void Processor::resetCore(const double samplerate, const int blocksize)
+{
+  LOG("Reset core");
+
+  core = std::make_unique<Core>(
+    samplerate,
+    blocksize,
+    parameters->dftsize(blocksize),
+    parameters->overlap(blocksize));
+
+  core->normalize(parameters->normalize());
+  core->quefrency(parameters->quefrency());
+  core->timbre(parameters->timbre());
+  core->pitch(parameters->pitch());
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new Processor(); }
