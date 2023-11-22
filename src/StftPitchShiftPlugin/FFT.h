@@ -8,7 +8,7 @@
 
   #include <pocketfft_hdronly.h>
 
-  class FFT : public stftpitchshift::FFT
+  class FFT final : public stftpitchshift::FFT
   {
 
   public:
