@@ -129,11 +129,14 @@ std::vector<double> Parameters::pitch() const
 
 int Parameters::dftsize(const int blocksize) const
 {
-  const int dftsize = std::stoi(parameters.get<std::string>("dft"));
+  int dftsize = std::stoi(parameters.get<std::string>("dft"));
 
-  if (blocksize >= dftsize)
+  dftsize = std::max(dftsize, 1024);
+  dftsize = next_power_of_two(dftsize);
+
+  while ((dftsize * 2 < blocksize) && (dftsize < 65536))
   {
-    LOG("TODO dftsize");
+    dftsize = next_power_of_two(dftsize + 1);
   }
 
   return dftsize;
@@ -141,11 +144,14 @@ int Parameters::dftsize(const int blocksize) const
 
 int Parameters::overlap(const int blocksize) const
 {
-  const int overlap = std::stoi(parameters.get<std::string>("ola"));
+  int overlap = std::stoi(parameters.get<std::string>("ola"));
 
-  if (blocksize <= overlap)
+  overlap = std::max(overlap, 4);
+  overlap = prev_power_of_two(overlap);
+
+  while ((overlap * 4 >= blocksize) && overlap)
   {
-    LOG("TODO overlap");
+    overlap = prev_power_of_two(overlap - 1);
   }
 
   return overlap;
