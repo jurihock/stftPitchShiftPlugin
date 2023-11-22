@@ -10,7 +10,7 @@ class GenericParameterContainer final
 public:
 
   explicit GenericParameterContainer(juce::AudioProcessor& process) : process(process) {}
-  ~GenericParameterContainer() { juce::ignoreUnused(process); }
+  ~GenericParameterContainer() {}
 
   void add(const std::string& ns, juce::AudioProcessorParameterWithID* parameter)
   {

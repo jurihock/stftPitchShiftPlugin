@@ -3,7 +3,6 @@
 #include <StftPitchShiftPlugin/Logger.h>
 
 Parameters::Parameters(juce::AudioProcessor& process) :
-  process(process),
   parameters(process)
 {
   parameters.add("bypass", new juce::AudioParameterBool(
@@ -46,7 +45,6 @@ Parameters::Parameters(juce::AudioProcessor& process) :
 
 Parameters::~Parameters()
 {
-  juce::ignoreUnused(process);
 }
 
 void Parameters::onbypass(std::function<void()> callback)

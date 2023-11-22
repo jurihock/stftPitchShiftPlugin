@@ -37,8 +37,6 @@ private:
   const int schema = 1;
   const int maxstages = 5;
 
-  juce::AudioProcessor& process;
-
   GenericParameterContainer parameters;
 
   static int prev_power_of_two(const int x)
