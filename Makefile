@@ -1,5 +1,7 @@
 .PHONY: help build clean app plug unplug log
 
+MODE = Release
+
 help:
 	@echo build
 	@echo clean
@@ -9,17 +11,17 @@ help:
 	@echo log
 
 build:
-	@cmake -DCMAKE_BUILD_TYPE=Release -GNinja -S . -B build
+	@cmake -DCMAKE_BUILD_TYPE=$(MODE) -GNinja -S . -B build
 	@cmake --build build
 
 clean:
 	@rm -rf build
 
 app:
-	@open -n ./build/StftPitchShiftPlugin_artefacts/Release/Standalone/StftPitchShiftPlugin.app
+	@open -n ./build/StftPitchShiftPlugin_artefacts/$(MODE)/Standalone/StftPitchShiftPlugin.app
 
 plug: unplug
-	@cp -r build/StftPitchShiftPlugin_artefacts/Release/AU/StftPitchShiftPlugin.component ~/Library/Audio/Plug-Ins/Components
+	@cp -r build/StftPitchShiftPlugin_artefacts/$(MODE)/AU/StftPitchShiftPlugin.component ~/Library/Audio/Plug-Ins/Components
 
 unplug:
 	@rm -rf ~/Library/Audio/Plug-Ins/Components/StftPitchShiftPlugin.component
