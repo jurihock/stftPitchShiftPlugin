@@ -4,8 +4,10 @@
 
   #include <JuceHeader.h>
 
-  static juce::FileLogger* plugin_file_logger = juce::FileLogger::createDefaultAppLogger(
-    "StftPitchShiftPlugin", "StftPitchShiftPlugin.log", "");
+  static std::shared_ptr<juce::FileLogger> plugin_file_logger =
+    std::shared_ptr<juce::FileLogger>(
+      juce::FileLogger::createDefaultAppLogger(
+        "StftPitchShiftPlugin", "StftPitchShiftPlugin.log", ""));
 
   template<typename... Args>
   static void write_to_log_file(const juce::String& str, Args&&... args)
