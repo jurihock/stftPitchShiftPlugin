@@ -4,8 +4,8 @@ project(StftPitchShiftPlugin VERSION 1.0.0)
 
 option(FASTMATH  "Enable fast math"    ON)
 option(POCKETFFT "Enable PocketFFT"    ON)
-option(LOGGING   "Enable file logger"  ON)
-option(CHRONO    "Enable timing log"   ON)
+option(LOGGING   "Enable runtime logs" OFF)
+option(CHRONO    "Enable timing logs"  OFF)
 option(WARNINGS  "Enable all warnings" ON)
 
 include("${CMAKE_CURRENT_LIST_DIR}/lib/CPM.cmake")

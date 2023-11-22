@@ -213,6 +213,8 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
     const int blocksize0 = state.value().blocksize;
     const int blocksize1 = channel_samples;
 
+    juce::ignoreUnused(blocksize0, blocksize1);
+
     LOG("Change block size from %d to %d", blocksize0, blocksize1);
 
     try
@@ -248,6 +250,8 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   {
     const double samplerate = state.value_or(nostate).samplerate;
     const int blocksize  = state.value_or(nostate).blocksize;
+
+    juce::ignoreUnused(samplerate, blocksize);
 
     LOG(CHRONOMETRY(samplerate, blocksize));
   }
