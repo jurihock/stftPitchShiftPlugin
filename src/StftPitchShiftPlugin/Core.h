@@ -24,6 +24,9 @@ public:
 
 private:
 
+  template<typename X, typename Y>
+  static Y transform(const X x) { return static_cast<Y>(x); }
+
   struct { size_t analysis_window_size, synthesis_window_size; } config;
   struct { std::vector<double> input, output; } buffer;
 

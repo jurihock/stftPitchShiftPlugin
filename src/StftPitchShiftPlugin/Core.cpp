@@ -61,10 +61,11 @@ void Core::process(const std::span<float> input, const std::span<float> output)
     buffer.input.begin());
 
   // copy new input samples
-  std::copy(
+  std::transform(
     input.begin(),
     input.end(),
-    buffer.input.begin() + analysis_window_size);
+    buffer.input.begin() + analysis_window_size,
+    transform<float, double>);
 
   // apply pitch shifting within the built-in STFT routine
   (*stft)(buffer.input, buffer.output, [&](std::span<std::complex<double>> dft)
@@ -73,10 +74,11 @@ void Core::process(const std::span<float> input, const std::span<float> output)
   });
 
   // copy new output samples back
-  std::copy(
+  std::transform(
     buffer.output.begin() - synthesis_window_size + analysis_window_size,
     buffer.output.end() - synthesis_window_size,
-    output.begin());
+    output.begin(),
+    transform<double, float>);
 
   // shift output buffer
   std::copy(
