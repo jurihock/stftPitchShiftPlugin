@@ -255,13 +255,16 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
 void Processor::resetCore(const double samplerate, const int blocksize)
 {
-  LOG("Reset core");
+  const int dftsize = parameters->dftsize(blocksize);
+  const int overlap = parameters->overlap(blocksize);
+
+  LOG("Reset core (dftsize %d, overlap %d)", dftsize, overlap);
 
   core = std::make_unique<Core>(
     samplerate,
     blocksize,
-    parameters->dftsize(blocksize),
-    parameters->overlap(blocksize));
+    dftsize,
+    overlap);
 
   core->normalize(parameters->normalize());
   core->quefrency(parameters->quefrency());
