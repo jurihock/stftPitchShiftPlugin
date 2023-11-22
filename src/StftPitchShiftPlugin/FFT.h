@@ -1,7 +1,5 @@
 #pragma once
 
-#define ENABLE_POCKET_FFT
-
 #if defined(ENABLE_POCKET_FFT)
 
   #include <StftPitchShift/FFT.h>

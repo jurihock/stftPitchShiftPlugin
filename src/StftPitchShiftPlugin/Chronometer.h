@@ -1,7 +1,5 @@
 #pragma once
 
-#define ENABLE_PLUGIN_CHRONOMETER
-
 #if defined(ENABLE_PLUGIN_CHRONOMETER)
 
   #include <StftPitchShift/Timer.h>

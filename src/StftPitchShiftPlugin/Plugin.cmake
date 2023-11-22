@@ -49,19 +49,69 @@ target_compile_definitions(${CMAKE_PROJECT_NAME}
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0)
 
-if (MSVC)
+if(FASTMATH)
 
-  target_compile_options(${CMAKE_PROJECT_NAME}
-    PRIVATE /fp:fast)
+  message(STATUS "Enabling fast math")
 
-else()
-
-  target_compile_options(${CMAKE_PROJECT_NAME}
-    PRIVATE -ffast-math)
+  if(MSVC)
+    target_compile_options(${CMAKE_PROJECT_NAME}
+      PRIVATE
+        /fp:fast)
+  else()
+    target_compile_options(${CMAKE_PROJECT_NAME}
+      PRIVATE
+        -ffast-math)
+  endif()
 
 endif()
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(POCKETFFT)
+
+  message(STATUS "Defining ENABLE_POCKET_FFT")
+
+  target_compile_definitions(${CMAKE_PROJECT_NAME}
+    PRIVATE
+      -DENABLE_POCKET_FFT)
+
+endif()
+
+if(LOGGING)
+
+  message(STATUS "Defining ENABLE_PLUGIN_LOGGER")
+
+  target_compile_definitions(${CMAKE_PROJECT_NAME}
+    PRIVATE
+      -DENABLE_PLUGIN_LOGGER)
+
+endif()
+
+if(CHRONO)
+
+  message(STATUS "Defining ENABLE_PLUGIN_CHRONOMETER")
+
+  target_compile_definitions(${CMAKE_PROJECT_NAME}
+    PRIVATE
+      -DENABLE_PLUGIN_CHRONOMETER)
+
+endif()
+
+if(WARNINGS)
+
+  message(STATUS "Enabling all warnings")
+
+  if(MSVC)
+    target_compile_options(${CMAKE_PROJECT_NAME}
+      PRIVATE
+        /W3 /WX)
+  else()
+    target_compile_options(${CMAKE_PROJECT_NAME}
+      PRIVATE
+        -Wall -Werror)
+  endif()
+
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
   # FIX
   # If you are using Link Time Optimisation (LTO), the new linker introduced in Xcode 15 may produce a broken binary.
@@ -69,6 +119,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   # Once you've selected a workaround, you can add JUCE_SILENCE_XCODE_15_LINKER_WARNING
   # to your preprocessor definitions to silence this warning.
   # https://forum.juce.com/t/vst-au-builds-fail-after-upgrading-to-xcode-15/57936/43
+
+  message(STATUS "Applying -Wl -ld_classic JUCE_SILENCE_XCODE_15_LINKER_WARNING")
 
   target_link_options(${CMAKE_PROJECT_NAME}
     PRIVATE
