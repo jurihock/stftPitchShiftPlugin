@@ -49,6 +49,18 @@ target_compile_definitions(${CMAKE_PROJECT_NAME}
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0)
 
+if (MSVC)
+
+  target_compile_options(${CMAKE_PROJECT_NAME}
+    PRIVATE /fp:fast)
+
+else()
+
+  target_compile_options(${CMAKE_PROJECT_NAME}
+    PRIVATE -ffast-math)
+
+endif()
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
   # FIX
