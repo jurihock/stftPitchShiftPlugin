@@ -144,10 +144,10 @@ int Parameters::overlap(const int blocksize) const
 {
   int overlap = std::stoi(parameters.get<std::string>("ola"));
 
-  overlap = std::max(overlap, 4);
+  overlap = std::max(overlap, 1);
   overlap = prev_power_of_two(overlap);
 
-  while ((overlap * 4 >= blocksize) && (overlap >= 4))
+  while ((overlap * 4 > blocksize) && (overlap > 1))
   {
     overlap = prev_power_of_two(overlap - 1);
   }
