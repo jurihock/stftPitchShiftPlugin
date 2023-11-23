@@ -196,7 +196,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   TIC();
 
-  if (parameters->bypass())
+  if (parameters->bypass() || (channel_samples < 4))
   {
     process_stereo_output();
   }
