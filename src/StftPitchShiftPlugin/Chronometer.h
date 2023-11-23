@@ -4,7 +4,7 @@
 
   #include <StftPitchShift/Timer.h>
 
-  static stftpitchshift::Timer<std::chrono::milliseconds> chronometer;
+  static stftpitchshift::Timer<std::chrono::microseconds> chronometer;
 
   static std::string chronometry(const double samplerate, const int blocksize)
   {
@@ -15,8 +15,11 @@
 
     std::ostringstream result;
 
+    result.setf(result.flags() | std::ios::fixed);
+    result.precision(3);
+
     result << stats << " | ";
-    result << int(period * 1e+3)  << " ms ";
+    result << (period * 1e+6)  << " us ";
     result << "bs=" << blocksize  << " ";
     result << "sr=" << samplerate;
 
@@ -25,7 +28,7 @@
 
   #define TIC(...) do { chronometer.tic(); } while (false)
   #define TOC(...) do { chronometer.toc(); } while (false)
-  #define LAP(...) (chronometer.lap() > 10e+3)
+  #define LAP(...) (chronometer.lap() > 10e+6)
 
   #define CHRONOMETRY(...) chronometry(__VA_ARGS__)
 
