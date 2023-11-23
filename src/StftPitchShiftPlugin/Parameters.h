@@ -4,6 +4,8 @@
 
 #include <StftPitchShiftPlugin/GenericParameterContainer.h>
 
+#include <bit>
+
 class Parameters final
 {
 
@@ -50,7 +52,7 @@ private:
   {
     jassert(x >= 0);
     const auto y = std::bit_ceil(static_cast<unsigned int>(x));
-    jassert(y <= std::numeric_limits<int>::max());
+    jassert(y <= static_cast<unsigned int>(std::numeric_limits<int>::max()));
     return static_cast<int>(y);
   }
 

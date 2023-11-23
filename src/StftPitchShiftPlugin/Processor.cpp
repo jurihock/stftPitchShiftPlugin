@@ -122,6 +122,8 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
   }
   catch(const std::exception& exception)
   {
+    juce::ignoreUnused(exception);
+
     LOG(exception.what());
   }
 }

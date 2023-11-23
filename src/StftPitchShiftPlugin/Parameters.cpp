@@ -192,6 +192,8 @@ void Parameters::read(const void* data, const int size)
   }
   catch(const std::exception& exception)
   {
+    juce::ignoreUnused(exception);
+
     LOG(exception.what());
   }
 }
@@ -226,6 +228,8 @@ void Parameters::write(juce::MemoryBlock& data)
   }
   catch(const std::exception& exception)
   {
+    juce::ignoreUnused(exception);
+
     LOG(exception.what());
   }
 }
