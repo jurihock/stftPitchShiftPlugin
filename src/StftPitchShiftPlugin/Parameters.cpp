@@ -147,7 +147,7 @@ int Parameters::overlap(const int blocksize) const
   overlap = std::max(overlap, 4);
   overlap = prev_power_of_two(overlap);
 
-  while ((overlap * 4 >= blocksize) && overlap)
+  while ((overlap * 4 >= blocksize) && (overlap >= 4))
   {
     overlap = prev_power_of_two(overlap - 1);
   }
