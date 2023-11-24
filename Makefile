@@ -1,7 +1,14 @@
 .PHONY: help build clean app plug unplug log
 
-CONFIG  = Release
-OPTIONS = -DLOGGING=ON -DCHRONO=ON
+GENERATOR = Ninja
+CONFIG    = Release
+PLATFORM  = -DCMAKE_OSX_ARCHITECTURES=arm64
+OPTIONS   = -DLOGGING=ON -DCHRONO=ON
+
+PLUGIN    = StftPitchShiftPlugin
+INPUT     = .
+OUTPUT    = ./build
+ARTEFACTS = $(OUTPUT)/$(PLUGIN)_artefacts/$(CONFIG)
 
 help:
 	@echo build
@@ -12,20 +19,20 @@ help:
 	@echo log
 
 build:
-	@cmake $(OPTIONS) -DCMAKE_BUILD_TYPE=$(CONFIG) -GNinja -S . -B build
-	@cmake --build build
+	@cmake -G$(GENERATOR) -DCMAKE_BUILD_TYPE=$(CONFIG) $(PLATFORM) $(OPTIONS) -S $(INPUT) -B $(OUTPUT)
+	@cmake --build $(OUTPUT)
 
 clean:
-	@rm -rf build
+	@rm -rf $(OUTPUT)
 
 app:
-	@open -n ./build/StftPitchShiftPlugin_artefacts/$(CONFIG)/Standalone/StftPitchShiftPlugin.app
+	@open -n $(ARTEFACTS)/Standalone/$(PLUGIN).app
 
 plug: unplug
-	@cp -r build/StftPitchShiftPlugin_artefacts/$(CONFIG)/AU/StftPitchShiftPlugin.component ~/Library/Audio/Plug-Ins/Components
+	@cp -r $(ARTEFACTS)/AU/$(PLUGIN).component ~/Library/Audio/Plug-Ins/Components
 
 unplug:
-	@rm -rf ~/Library/Audio/Plug-Ins/Components/StftPitchShiftPlugin.component
+	@rm -rf ~/Library/Audio/Plug-Ins/Components/$(PLUGIN).component
 
 log:
-	@tail -F ~/Library/Logs/StftPitchShiftPlugin/StftPitchShiftPlugin.log
+	@tail -F ~/Library/Logs/$(PLUGIN)/$(PLUGIN).log

@@ -47,7 +47,8 @@ Processor::~Processor()
 
 const juce::String Processor::getName() const
 {
-  return juce::String("stftPitchShift Plugin v") +
+  return juce::String(ProjectInfo::projectName) +
+         juce::String(" v") +
          juce::String(ProjectInfo::versionString);
 }
 

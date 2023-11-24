@@ -1,19 +1,21 @@
 juce_add_plugin(${CMAKE_PROJECT_NAME}
+  PLUGIN_NAME                   "${CMAKE_PROJECT_NAME} v${CMAKE_PROJECT_VERSION}"
+  DESCRIPTION                   "Real-time poly pitch and timbre shifting plugin"
   PRODUCT_NAME                  "${CMAKE_PROJECT_NAME}"
   VERSION                       "${CMAKE_PROJECT_VERSION}"
-  COMPANY_NAME                  "Juergen Hock"
+  COMPANY_NAME                  "jurihock"
   COMPANY_EMAIL                 "juergen.hock@jurihock.de"
   COMPANY_WEBSITE               "https://github.com/jurihock/stftPitchShiftPlugin"
   BUNDLE_ID                     "de.jurihock.stftpitchshift"
-  PLUGIN_MANUFACTURER_CODE      Hock
-  PLUGIN_CODE                   Stft
+  PLUGIN_MANUFACTURER_CODE      "Hock"
+  PLUGIN_CODE                   "Stft"
   IS_SYNTH                      FALSE
   IS_MIDI_EFFECT                FALSE
   NEEDS_MIDI_INPUT              FALSE
   NEEDS_MIDI_OUTPUT             FALSE
   MICROPHONE_PERMISSION_ENABLED TRUE
   COPY_PLUGIN_AFTER_BUILD       FALSE
-  FORMATS                       AU VST3 Standalone)
+  FORMATS                       AU LV2 VST3 Standalone)
 
 juce_generate_juce_header(${CMAKE_PROJECT_NAME})
 
@@ -112,7 +114,7 @@ if(WARNINGS)
 
 endif()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(APPLE)
 
   # FIX
   # If you are using Link Time Optimisation (LTO), the new linker introduced in Xcode 15 may produce a broken binary.
