@@ -10,7 +10,7 @@ OUTPUT=${ROOT}/build
 
 ARTEFACTS=${OUTPUT}/StftPitchShiftPlugin_artefacts/${CONFIG}
 
-cmake ${ARGS} -DCMAKE_BUILD_TYPE=${CONFIG} -S "${INPUT}" -B "${OUTPUT}" || exit /b
-cmake --build "${OUTPUT}" || exit /b
+cmake ${ARGS} -DCMAKE_BUILD_TYPE=${CONFIG} -S "${INPUT}" -B "${OUTPUT}" || exit $?
+cmake --build "${OUTPUT}" || exit $?
 
 ls -m "${ARTEFACTS}"
