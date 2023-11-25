@@ -1,0 +1,21 @@
+name: build.yml
+
+on: push
+
+jobs:
+
+  ubuntu:
+
+    name: Build on Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Setup
+      run: ./scripts/ubuntu_setup.sh
+
+    - name: Build
+      run: ./scripts/ubuntu_build.sh
