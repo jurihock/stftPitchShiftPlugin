@@ -19,30 +19,31 @@ jobs:
       uses: actions/checkout@master
 
     - name: Setup (MacOS)
-      run:  ./scripts/setup_macos.sh
       if:   matrix.os == 'macos-latest'
+      run:  ./scripts/setup_macos.sh
 
     - name: Setup (Ubuntu)
-      run:  ./scripts/setup_ubuntu.sh
       if:   matrix.os == 'ubuntu-latest'
+      run:  ./scripts/setup_ubuntu.sh
 
     - name: Setup (Windows)
-      run:  cmd /c ".\scripts\setup_windows.bat"
       if:   matrix.os == 'windows-latest'
+      run:  cmd /c ".\scripts\setup_windows.bat"
 
     - name: Build (MacOS)
-      run:  ./scripts/build_macos.sh
       if:   matrix.os == 'macos-latest'
+      run:  ./scripts/build_macos.sh
 
     - name: Build (Ubuntu)
-      run:  ./scripts/build_ubuntu.sh
       if:   matrix.os == 'ubuntu-latest'
+      run:  ./scripts/build_ubuntu.sh
 
     - name: Build (Windows)
-      run:  cmd /c ".\scripts\build_windows.bat"
       if:   matrix.os == 'windows-latest'
+      run:  cmd /c ".\scripts\build_windows.bat"
 
     - name: Archive build artefacts
+      if:   github.event_name == 'push'
       uses: actions/upload-artifact@master
       with:
         name: StftPitchShiftPlugin-${{matrix.os}}
