@@ -46,7 +46,7 @@ void Core::pitch(std::vector<double> values)
 
 bool Core::compatible(const int blocksize) const
 {
-  return blocksize == config.synthesis_window_size;
+  return static_cast<size_t>(blocksize) == config.synthesis_window_size;
 }
 
 void Core::process(const std::span<float> input, const std::span<float> output)
