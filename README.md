@@ -35,8 +35,8 @@ Use one of the following links to download the latest binaries for your specific
 - [Windows](https://nightly.link/jurihock/stftPitchShiftPlugin/workflows/build/main/StftPitchShiftPlugin-windows-latest.zip)
 - [Ubuntu](https://nightly.link/jurihock/stftPitchShiftPlugin/workflows/build/main/StftPitchShiftPlugin-ubuntu-latest.zip)
 
-Due to GitHub [limitation](https://github.com/actions/upload-artifact/issues/38),
-the _standalone app_ included in macOS and Ubuntu artifacts comes with broken execution permission,
+Due to a GitHub [limitation](https://github.com/actions/upload-artifact/issues/38),
+the _standalone app_ included in macOS and Ubuntu build artifacts comes with broken execution permission,
 that need to be repaired manually by executing the `chmod +x` command in the terminal:
 
 ``` bash
@@ -48,7 +48,7 @@ chmod +x ./Standalone/StftPitchShiftPlugin
 ```
 
 On macOS, you will also have to deal with the [Gatekeeper](https://support.apple.com/HT202491),
-in order to execute the standalone app or to use the AU or VST3 plugin in your DAW.
+in order to execute the standalone app or to load the AU or VST3 plugin in your DAW.
 
 ### Build from source code
 
