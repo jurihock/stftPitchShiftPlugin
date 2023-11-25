@@ -10,17 +10,25 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ macos-latest, ubuntu-latest ]
 
     steps:
 
     - name: Checkout
       uses: actions/checkout@master
 
+    - name: Setup (MacOS)
+      run:  ./scripts/setup_macos.sh
+      if:   matrix.os == 'macos-latest'
+
     - name: Setup (Ubuntu)
-      run:  ./scripts/ubuntu_setup.sh
+      run:  ./scripts/setup_ubuntu.sh
       if:   matrix.os == 'ubuntu-latest'
 
+    - name: Build (MacOS)
+      run:  ./scripts/build_macos.sh
+      if:   matrix.os == 'macos-latest'
+
     - name: Build (Ubuntu)
-      run:  ./scripts/ubuntu_build.sh
+      run:  ./scripts/build_ubuntu.sh
       if:   matrix.os == 'ubuntu-latest'
