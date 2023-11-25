@@ -68,6 +68,16 @@ if(FASTMATH)
 
 endif()
 
+if(FASTATAN)
+
+  message(STATUS "Defining ENABLE_ARCTANGENT_APPROXIMATION")
+
+  target_compile_definitions(${CMAKE_PROJECT_NAME}
+    PRIVATE
+      -DENABLE_ARCTANGENT_APPROXIMATION)
+
+endif()
+
 if(POCKETFFT)
 
   message(STATUS "Defining ENABLE_POCKET_FFT")
