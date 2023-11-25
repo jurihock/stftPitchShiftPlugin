@@ -34,5 +34,5 @@ Smaller blocks may have impact on the overal quality of the signal processing.
 
 ## Performance
 
-The plugin performance is most affected by parameters `3`, `11` and `12`.
-If you are experiencing dropouts, consider disabling `3` or reducing `11` and `12`.
+The plugin performance is _most_ affected by parameters `3`, `11` and `12`.
+If you're experiencing dropouts, consider disabling `3` or reducing `11` and `12`.
