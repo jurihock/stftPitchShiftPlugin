@@ -1,21 +1,26 @@
 name: build.yml
 
-on: push
+on: [ push, pull_request ]
 
 jobs:
 
-  ubuntu:
+  build:
 
-    name: Build on Ubuntu
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
 
     steps:
 
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: Setup
-      run: ./scripts/ubuntu_setup.sh
+    - name: Setup (Ubuntu)
+      run:  ./scripts/ubuntu_setup.sh
+      if:   matrix.os == 'ubuntu-latest'
 
-    - name: Build
-      run: ./scripts/ubuntu_build.sh
+    - name: Build (Ubuntu)
+      run:  ./scripts/ubuntu_build.sh
+      if:   matrix.os == 'ubuntu-latest'
