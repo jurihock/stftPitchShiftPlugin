@@ -3,7 +3,7 @@
 BASE=$(dirname "$(readlink -f "$0")")
 ROOT=$(dirname "${BASE}")
 
-ARGS=-DCMAKE_OSX_ARCHITECTURES=arm64
+ARGS=-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
 CONFIG=Release
 INPUT=${ROOT}
 OUTPUT=${ROOT}/build
