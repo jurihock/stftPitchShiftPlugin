@@ -1,3 +1,13 @@
+set(FORMATS Standalone VST3)
+
+if(APPLE)
+  list(APPEND FORMATS AU)
+endif()
+
+if(LINUX)
+  list(APPEND FORMATS LV2)
+endif()
+
 juce_add_plugin(${CMAKE_PROJECT_NAME}
   PLUGIN_NAME                   "${CMAKE_PROJECT_NAME} v${CMAKE_PROJECT_VERSION}"
   DESCRIPTION                   "Real-time poly pitch and timbre shifting plugin"
@@ -15,7 +25,7 @@ juce_add_plugin(${CMAKE_PROJECT_NAME}
   NEEDS_MIDI_OUTPUT             FALSE
   MICROPHONE_PERMISSION_ENABLED TRUE
   COPY_PLUGIN_AFTER_BUILD       FALSE
-  FORMATS                       AU LV2 VST3 Standalone)
+  FORMATS                       ${FORMATS})
 
 juce_generate_juce_header(${CMAKE_PROJECT_NAME})
 
