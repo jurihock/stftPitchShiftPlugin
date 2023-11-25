@@ -9,7 +9,7 @@ which also provides a Python interface and useful command line tools.
 Following features are currently included:
 
 - poly pitch shifting with or without formant preservation,
-- timbre changing with or without pitch shifting,
+- pitch independent timbre changing,
 - low latency capability depending on the preset block size,
 - optional output normalization to match the input loudness level.
 
