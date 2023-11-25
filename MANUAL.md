@@ -2,7 +2,9 @@
 
 This audio effect modifies the frequency content of the input signal in several ways in real-time.
 
-Currently, the following customizations are available:
+## Parameters
+
+Currently, the following customizations are available, which can be adjusted at runtime:
 
 <img src="assets/screenshot.png" width="500">
 
@@ -16,3 +18,21 @@ Currently, the following customizations are available:
 | 10 | Pitch stages | Total amount of pitch shifts that will be applied. |
 | 11 | STFT overlap | Degree of the internal audio segment overlap. |
 | 12 | DFT size | Size of the signal analysis window. |
+
+Adjusting of parameters `11` and `12` results in a total reset of the internal signal processing routine.
+Therefore, it is not recommended to change these two parameters at runtime.
+
+## Routing
+
+Formally, the _stftPitchShiftPlugin_ supports any mono/stereo combination of input and output.
+However, only the first input channel (usually _left_) will be captured and passed to all connected output channels.
+
+## Latency
+
+The output latency generally depends on the preset block size and the DFT window size `12`.
+Smaller blocks may have impact on the overal quality of the signal processing.
+
+## Performance
+
+The plugin performance is most affected by parameters `3`, `11` and `12`.
+If you are experiencing dropouts, consider disabling `3` or reducing `11` and `12`.
