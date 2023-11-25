@@ -26,7 +26,7 @@ jobs:
       if:   matrix.os == 'ubuntu-latest'
 
     - name: Setup (Windows)
-      run:  cmd /c ./scripts/setup_windows.bat
+      run:  cmd /c ".\scripts\setup_windows.bat"
       if:   matrix.os == 'windows-latest'
 
     - name: Build (MacOS)
@@ -38,7 +38,7 @@ jobs:
       if:   matrix.os == 'ubuntu-latest'
 
     - name: Build (Windows)
-      run:  cmd /c ./scripts/build_windows.bat
+      run:  cmd /c ".\scripts\build_windows.bat"
       if:   matrix.os == 'windows-latest'
 
     - name: Archive build artefacts
