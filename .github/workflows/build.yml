@@ -1,16 +1,16 @@
 name: build.yml
 
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 jobs:
 
   build:
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{matrix.os}}
 
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
 
@@ -40,3 +40,9 @@ jobs:
     - name: Build (Windows)
       run:  cmd /c ./scripts/build_windows.bat
       if:   matrix.os == 'windows-latest'
+
+    - name: Archive build artefacts
+      uses: actions/upload-artifact@master
+      with:
+        name: StftPitchShiftPlugin-${{matrix.os}}
+        path: ${{runner.workspace}}/build/StftPitchShiftPlugin_artefacts/Release
