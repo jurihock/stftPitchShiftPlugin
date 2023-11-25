@@ -13,8 +13,8 @@ Following features are currently included:
 - low latency capability depending on the preset block size,
 - optional output normalization to match the input loudness level.
 
-The _stftPitchShiftPlugin_ is available in common VST3, AU, LV2 formats as well as a standalone app.
-It also provides a basic UI to adjust effect options on the fly:
+The _stftPitchShiftPlugin_ is available in VST3, AU, LV2 formats as well as a standalone app.
+It also provides a basic UI to adjust the effect parameters on the fly:
 
 <img src="assets/screenshot.png" width="500">
 
