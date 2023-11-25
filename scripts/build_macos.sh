@@ -13,4 +13,6 @@ ARTEFACTS=${OUTPUT}/StftPitchShiftPlugin_artefacts/${CONFIG}
 cmake ${ARGS} -DCMAKE_BUILD_TYPE=${CONFIG} -S "${INPUT}" -B "${OUTPUT}" || exit $?
 cmake --build "${OUTPUT}" || exit $?
 
+chmod +x "${ARTEFACTS}/Standalone/StftPitchShiftPlugin.app/Contents/MacOS/StftPitchShiftPlugin"
+
 ls -m "${ARTEFACTS}"
