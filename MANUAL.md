@@ -1,0 +1,3 @@
+# stftPitchShiftPlugin User Manual
+
+tbd
