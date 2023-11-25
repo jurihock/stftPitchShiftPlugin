@@ -60,7 +60,7 @@ Please read the official JUCE [documentation](https://github.com/juce-framework/
 - [build_windows.bat](build_windows.bat)
 - [build_ubuntu.sh](build_ubuntu.sh)
 
-The advantage of this method on _macOS_ is that no additional _Gatekeeper_ handling is required.
+The advantage of this method on macOS is that no additional _Gatekeeper_ handling is required.
 
 ## Last but not least
 
