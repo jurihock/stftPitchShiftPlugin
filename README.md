@@ -29,7 +29,7 @@ The (almost) ready to use binaries can be obtained in two ways:
 
 ### Continuous build artifacts
 
-Use one of the following link to download the latest binaries for your specific operating system:
+Use one of the following links to download the latest binaries for your specific operating system:
 
 - [macOS](https://nightly.link/jurihock/stftPitchShiftPlugin/workflows/build/main/StftPitchShiftPlugin-macos-latest.zip)
 - [Windows](https://nightly.link/jurihock/stftPitchShiftPlugin/workflows/build/main/StftPitchShiftPlugin-windows-latest.zip)
@@ -67,6 +67,11 @@ The advantage of this method on macOS is that no additional _Gatekeeper_ handlin
 This project is currently at an early development stage, so expect more highlights to come.
 
 Stay tuned!
+
+## Credits
+
+- [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft) by Martin Reinecke
+- [nightly.link](https://github.com/oprypin/nightly.link) by Oleh Prypin
 
 ## License
 
