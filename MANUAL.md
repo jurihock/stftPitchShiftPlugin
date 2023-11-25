@@ -8,7 +8,7 @@ Currently, the following customizations are available, which can be adjusted at 
 
 <img src="assets/screenshot.png" width="500">
 
-| # | Feature | Function |
+| # | Parameter | Function |
 | - | ------- | -------- |
 | 1 | Bypass | Enable to skip the signal processing and pass the input signal directly to the output. |
 | 2 | Normalize | Enable to match the processed output loudness level to the input level. |
