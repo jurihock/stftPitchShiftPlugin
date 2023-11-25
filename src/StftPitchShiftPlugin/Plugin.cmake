@@ -78,7 +78,7 @@ if(FASTATAN)
 
 endif()
 
-if(POCKETFFT)
+if(FASTFFT)
 
   message(STATUS "Defining ENABLE_POCKET_FFT")
 

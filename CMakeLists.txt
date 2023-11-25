@@ -4,7 +4,7 @@ project(StftPitchShiftPlugin VERSION 1.0.0)
 
 option(FASTMATH  "Enable fast math"    ON)
 option(FASTATAN  "Enable fast atan2"   ON)
-option(POCKETFFT "Enable PocketFFT"    ON)
+option(FASTFFT   "Enable PocketFFT"    ON)
 option(LOGGING   "Enable runtime logs" OFF)
 option(CHRONO    "Enable timing logs"  OFF)
 option(WARNINGS  "Enable all warnings" ON)
