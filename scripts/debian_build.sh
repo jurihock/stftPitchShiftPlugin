@@ -3,7 +3,7 @@
 BASE=$(dirname "$(readlink -f "$0")")
 ROOT=$(dirname "${BASE}")
 
-CONFIG= Release
+CONFIG=Release
 INPUT=${ROOT}
 OUTPUT=${ROOT}/build
 
