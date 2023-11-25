@@ -57,8 +57,8 @@ Since the project is based on _CMake_, it can be compiled in the same way on any
 Please read the official JUCE [documentation](https://github.com/juce-framework/JUCE/blob/master/docs/CMake%20API.md) and the included script files:
 
 - [build_macos.sh](scripts/build_macos.sh)
-- [build_windows.bat](build_windows.bat)
-- [build_ubuntu.sh](build_ubuntu.sh)
+- [build_windows.bat](scripts/build_windows.bat)
+- [build_ubuntu.sh](scripts/build_ubuntu.sh)
 
 The advantage of this method on macOS is that no additional _Gatekeeper_ handling is required.
 
