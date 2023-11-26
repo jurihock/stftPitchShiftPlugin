@@ -39,5 +39,6 @@ log:
 	@tail -F ~/Library/Logs/$(PLUGIN)/$(PLUGIN).log
 
 reset: unplug
+	@rm -rf ~/Library/Caches/AudioUnitCache
 	@sudo killall -9 AudioComponentRegistrar
 	@auval -a
