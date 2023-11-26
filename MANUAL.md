@@ -4,7 +4,7 @@ This audio effect modifies the frequency content of the input signal in several 
 
 ## Parameters
 
-Currently, following customizations are available and can be adjusted at runtime:
+Following customizations are currently available:
 
 <img src="assets/screenshot.png" width="500">
 
@@ -19,10 +19,11 @@ Currently, following customizations are available and can be adjusted at runtime
 | 11 | STFT overlap | Degree of the internal audio segment [overlap](https://api.semanticscholar.org/CorpusID:15841658). |
 | 12 | DFT size | Number of frequency bins to be used for spectral processing. |
 
-Remarks:
+## Automation
 
+- All parameters are adjustable at runtime, the changes take effect immediately.
 - Manually adjusting parameters `11` and `12` causes a complete reset of the internal signal processing. Permanently changing these two parameters at runtime is not recommended.
-- Additionally, parameters `11` and `12` are automatically adjusted for extremely small and large block sizes.
+- Additionally, parameters `11` and `12` are automatically adapted for extremely small and large block sizes. This usually happens only once at startup or on each manual change of `11` and `12`.
 
 ## Routing
 
@@ -31,7 +32,7 @@ However, only the first input channel (usually _left_) will be captured and pass
 
 ## Latency
 
-The output latency _generally_ depends on the preset block size and the DFT window size `12`.
+The output latency _generally_ depends on the preset block size and the DFT size `12`.
 Smaller blocks may have impact on the overal quality of the signal processing.
 
 ## Performance
