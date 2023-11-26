@@ -29,7 +29,7 @@ app:
 	@open -n $(ARTEFACTS)/Standalone/$(PLUGIN).app
 
 plug: unplug
-	@cp -r $(ARTEFACTS)/AU/$(PLUGIN).component ~/Library/Audio/Plug-Ins/Components
+	@cp -rf $(ARTEFACTS)/AU/$(PLUGIN).component ~/Library/Audio/Plug-Ins/Components
 
 unplug:
 	@rm -rf ~/Library/Audio/Plug-Ins/Components/$(PLUGIN).component
