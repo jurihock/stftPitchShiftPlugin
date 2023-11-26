@@ -1,4 +1,4 @@
-.PHONY: help build clean app plug unplug log
+.PHONY: help build clean app plug unplug log kill
 
 GENERATOR = Ninja
 CONFIG    = Release
@@ -17,6 +17,7 @@ help:
 	@echo plug
 	@echo unplug
 	@echo log
+	@echo kill
 
 build:
 	@cmake -G$(GENERATOR) -DCMAKE_BUILD_TYPE=$(CONFIG) $(PLATFORM) $(OPTIONS) -S $(INPUT) -B $(OUTPUT)
@@ -36,3 +37,6 @@ unplug:
 
 log:
 	@tail -F ~/Library/Logs/$(PLUGIN)/$(PLUGIN).log
+
+kill:
+	@sudo killall -9 AudioComponentRegistrar
