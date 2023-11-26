@@ -20,15 +20,15 @@ jobs:
 
     - name: Setup (MacOS)
       if:   matrix.os == 'macos-latest'
-      run:  ./scripts/setup_macos.sh
+      run:  ./scripts/prebuild_macos.sh
 
     - name: Setup (Ubuntu)
       if:   matrix.os == 'ubuntu-latest'
-      run:  ./scripts/setup_ubuntu.sh
+      run:  ./scripts/prebuild_ubuntu.sh
 
     - name: Setup (Windows)
       if:   matrix.os == 'windows-latest'
-      run:  cmd /c ".\scripts\setup_windows.bat"
+      run:  cmd /c ".\scripts\prebuild_windows.bat"
 
     - name: Build (MacOS)
       if:   matrix.os == 'macos-latest'
@@ -41,6 +41,18 @@ jobs:
     - name: Build (Windows)
       if:   matrix.os == 'windows-latest'
       run:  cmd /c ".\scripts\build_windows.bat"
+
+    - name: Validate (MacOS)
+      if:   matrix.os == 'macos-latest'
+      run:  ./scripts/postbuild_macos.sh
+
+    - name: Validate (Ubuntu)
+      if:   matrix.os == 'ubuntu-latest'
+      run:  ./scripts/postbuild_ubuntu.sh
+
+    - name: Validate (Windows)
+      if:   matrix.os == 'windows-latest'
+      run:  cmd /c ".\scripts\postbuild_windows.bat"
 
     - name: Archive build artefacts
       if:   github.event_name == 'push'

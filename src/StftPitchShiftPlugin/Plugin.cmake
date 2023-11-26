@@ -1,10 +1,10 @@
 set(FORMATS Standalone VST3)
 
-if(APPLE)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   list(APPEND FORMATS AU)
 endif()
 
-if(LINUX)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   list(APPEND FORMATS LV2)
 endif()
 
@@ -134,7 +134,7 @@ if(WARNINGS)
 
 endif()
 
-if(APPLE)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
   # FIX
   # If you are using Link Time Optimisation (LTO), the new linker introduced in Xcode 15 may produce a broken binary.
