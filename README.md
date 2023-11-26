@@ -1,5 +1,10 @@
 # Official JUCE plugin for stftPitchShift
 
+![language](https://img.shields.io/badge/plugin-AU%20LV2%20VST3-blue)
+![license](https://img.shields.io/github/license/jurihock/stftPitchShiftPlugin?color=blue)
+![build cpp](https://img.shields.io/github/actions/workflow/status/jurihock/stftPitchShiftPlugin/build.yml?branch=main&label=build)
+![tag](https://img.shields.io/github/v/tag/jurihock/stftPitchShiftPlugin?color=gold)
+
 The _stftPitchShiftPlugin_ features poly pitch and timbre shifting simultaneously and in real-time.
 It's completely based on the [stftPitchShift](https://github.com/jurihock/stftPitchShift) library,
 which also provides a Python interface and useful command line tools.
@@ -70,7 +75,9 @@ Stay tuned!
 
 ## Credits
 
+- [JUCE](https://github.com/juce-framework/JUCE) by JUCE Team
 - [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft) by Martin Reinecke
+- [pluginval](https://github.com/Tracktion/pluginval) by Tracktion Team
 - [nightly.link](https://github.com/oprypin/nightly.link) by Oleh Prypin
 
 ## License
