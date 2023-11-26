@@ -4,7 +4,7 @@ This audio effect modifies the frequency content of the input signal in several 
 
 ## Parameters
 
-Currently, the following customizations are available, which can be adjusted at runtime:
+Currently, following customizations are available and can be adjusted at runtime[^1]:
 
 <img src="assets/screenshot.png" width="500">
 
@@ -12,14 +12,14 @@ Currently, the following customizations are available, which can be adjusted at 
 | - | ------- | -------- |
 | 1 | Bypass | Enable to skip the signal processing and pass the input signal directly to the output. |
 | 2 | Normalize | Enable to match the processed output loudness level to the input level. |
-| 3 | Timbre quefrency | Cutoff _quefrency_ of the low-pass _lifter_ in milliseconds used for timbre extraction. If you set it to zero, the pitch independent timbre processing disappears. |
+| 3 | Timbre quefrency | Cutoff _quefrency_ of the [cepstral](https://en.wikipedia.org/wiki/Cepstrum) low-pass _lifter_ in milliseconds used for timbre extraction. If you set it to zero, the pitch independent timbre processing disappears. |
 | 4 | Timbre shift | Number of semitones to shift the timbre independent of the pitch when `3` is enabled. |
 | 5-9 | Pitch shift | Number of semitones to repeatedly shift the pitch. Depending on `3` it will have an equal effect on the timbre. |
 | 10 | Pitch stages | Total amount of pitch shifts that will be applied. |
-| 11 | STFT overlap | Degree of the internal audio segment overlap. |
+| 11 | STFT overlap | Degree of the internal audio segment [overlap](https://api.semanticscholar.org/CorpusID:15841658). |
 | 12 | DFT size | Size of the signal analysis window. |
 
-Adjusting of parameters `11` and `12` results in a total reset of the internal signal processing routine.
+[^1]: Adjusting of parameters `11` and `12` results in a total reset of the internal signal processing routine.
 Therefore, it is not recommended to change these two parameters at runtime.
 
 ## Routing
@@ -29,7 +29,7 @@ However, only the first input channel (usually _left_) will be captured and pass
 
 ## Latency
 
-The output latency generally depends on the preset block size and the DFT window size `12`.
+The output latency _generally_ depends on the preset block size and the DFT window size `12`.
 Smaller blocks may have impact on the overal quality of the signal processing.
 
 ## Performance
