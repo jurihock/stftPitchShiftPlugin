@@ -4,7 +4,7 @@ This audio effect modifies the frequency content of the input signal in several 
 
 ## Parameters
 
-Currently, following customizations are available and can be adjusted at runtime[^1]:
+Currently, following customizations are available and can be adjusted at runtime:
 
 <img src="assets/screenshot.png" width="500">
 
@@ -17,10 +17,12 @@ Currently, following customizations are available and can be adjusted at runtime
 | 5-9 | Pitch shift | Number of semitones to repeatedly shift the pitch. Depending on `3` it will have an equal effect on the timbre. |
 | 10 | Pitch stages | Total amount of pitch shifts that will be applied. |
 | 11 | STFT overlap | Degree of the internal audio segment [overlap](https://api.semanticscholar.org/CorpusID:15841658). |
-| 12 | DFT size | Size of the signal analysis window. |
+| 12 | DFT size | Number of frequency bins to be used for spectral processing. |
 
-[^1]: Adjusting of parameters `11` and `12` results in a total reset of the internal signal processing routine.
-Therefore, it is not recommended to change these two parameters at runtime.
+Remarks:
+
+- Manually adjusting parameters `11` and `12` causes a complete reset of the internal signal processing. Permanently changing these two parameters at runtime is not recommended.
+- Additionally, parameters `11` and `12` are automatically adjusted for extremely small and large block sizes.
 
 ## Routing
 
