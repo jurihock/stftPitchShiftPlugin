@@ -20,7 +20,7 @@ if(pocketfft_ADDED)
   target_compile_definitions(pocketfft
     INTERFACE -DPOCKETFFT_CACHE_SIZE=10)
 
-  if (UNIX)
+  if(UNIX)
     target_link_libraries(pocketfft
       INTERFACE pthread)
   endif()
