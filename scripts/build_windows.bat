@@ -8,7 +8,7 @@ pushd "%BASE%\.."
 set ROOT=%CD%
 popd
 
-set ARGS=-A x64
+set ARGS=-DCMAKE_GENERATOR_PLATFORM=x64
 set CONFIG=Release
 set INPUT=%ROOT%
 set OUTPUT=%ROOT%\build
