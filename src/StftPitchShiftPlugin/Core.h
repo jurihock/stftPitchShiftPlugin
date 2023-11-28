@@ -20,7 +20,7 @@ public:
 
   bool compatible(const int blocksize) const;
 
-  void process(const std::span<float> input, const std::span<float> output);
+  void process(const std::span<const float> input, const std::span<float> output);
 
 private:
 

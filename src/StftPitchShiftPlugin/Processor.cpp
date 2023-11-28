@@ -171,8 +171,8 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   const auto process_mono_input = [&]()
   {
-    auto input = std::span<float>(
-      const_cast<float*>(audio.getReadPointer(0)),
+    auto input = std::span<const float>(
+      audio.getReadPointer(0),
       static_cast<size_t>(channel_samples));
 
     auto output = std::span<float>(

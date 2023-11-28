@@ -49,7 +49,7 @@ bool Core::compatible(const int blocksize) const
   return static_cast<size_t>(blocksize) == config.synthesis_window_size;
 }
 
-void Core::process(const std::span<float> input, const std::span<float> output)
+void Core::process(const std::span<const float> input, const std::span<float> output)
 {
   const auto analysis_window_size  = config.analysis_window_size;
   const auto synthesis_window_size = config.synthesis_window_size;
