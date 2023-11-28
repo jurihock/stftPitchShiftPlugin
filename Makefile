@@ -1,4 +1,4 @@
-.PHONY: help build clean app plug unplug log reset
+.PHONY: help build clean app log plug unplug reset
 
 GENERATOR = Ninja
 CONFIG    = Release
@@ -14,13 +14,13 @@ help:
 	@echo build
 	@echo clean
 	@echo app
+	@echo log
 	@echo plug
 	@echo unplug
-	@echo log
 	@echo reset
 
 build:
-	@cmake -G$(GENERATOR) -DCMAKE_BUILD_TYPE=$(CONFIG) $(PLATFORM) $(OPTIONS) -S $(INPUT) -B $(OUTPUT)
+	@cmake -G $(GENERATOR) -DCMAKE_BUILD_TYPE=$(CONFIG) $(PLATFORM) $(OPTIONS) -S $(INPUT) -B $(OUTPUT)
 	@cmake --build $(OUTPUT)
 
 clean:
@@ -29,14 +29,14 @@ clean:
 app:
 	@open -n $(ARTEFACTS)/Standalone/$(PLUGIN).app
 
+log:
+	@tail -F ~/Library/Logs/$(PLUGIN)/$(PLUGIN).log
+
 plug: unplug
 	@cp -rf $(ARTEFACTS)/AU/$(PLUGIN).component ~/Library/Audio/Plug-Ins/Components
 
 unplug:
 	@rm -rf ~/Library/Audio/Plug-Ins/Components/$(PLUGIN).component
-
-log:
-	@tail -F ~/Library/Logs/$(PLUGIN)/$(PLUGIN).log
 
 reset: unplug
 	@rm -rf ~/Library/Caches/AudioUnitCache
