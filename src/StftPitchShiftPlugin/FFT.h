@@ -11,7 +11,7 @@
 
   public:
 
-    void fft(const std::span<float> frame, const std::span<std::complex<float>> dft) override
+    void fft(const std::span<const float> frame, const std::span<std::complex<float>> dft) override
     {
       pocketfft::r2c(
         { frame.size() },
@@ -24,7 +24,7 @@
         float(1) / frame.size());
     }
 
-    void fft(const std::span<double> frame, const std::span<std::complex<double>> dft) override
+    void fft(const std::span<const double> frame, const std::span<std::complex<double>> dft) override
     {
       pocketfft::r2c(
         { frame.size() },
@@ -37,7 +37,7 @@
         double(1) / frame.size());
     }
 
-    void ifft(const std::span<std::complex<float>> dft, const std::span<float> frame) override
+    void ifft(const std::span<const std::complex<float>> dft, const std::span<float> frame) override
     {
       pocketfft::c2r(
         { frame.size() },
@@ -50,7 +50,7 @@
         float(1));
     }
 
-    void ifft(const std::span<std::complex<double>> dft, const std::span<double> frame) override
+    void ifft(const std::span<const std::complex<double>> dft, const std::span<double> frame) override
     {
       pocketfft::c2r(
         { frame.size() },
