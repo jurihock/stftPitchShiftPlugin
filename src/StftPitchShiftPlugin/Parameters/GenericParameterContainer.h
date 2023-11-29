@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 
-#include <StftPitchShiftPlugin/GenericParameterListener.h>
+#include <StftPitchShiftPlugin/Parameters/GenericParameterListener.h>
 
 class GenericParameterContainer final
 {
