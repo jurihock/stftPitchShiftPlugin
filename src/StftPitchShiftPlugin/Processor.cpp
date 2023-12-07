@@ -1,5 +1,8 @@
 #include <StftPitchShiftPlugin/Processor.h>
 
+#include <StftPitchShiftPlugin/Core/InstantCore.h>
+#include <StftPitchShiftPlugin/Core/DelayedCore.h>
+
 #include <StftPitchShiftPlugin/Logger.h>
 
 Processor::Processor() :
@@ -37,7 +40,7 @@ Processor::Processor() :
   parameters->onreset([&]()
   {
     std::lock_guard lock(mutex);
-    if (state) { resetCore(state.value().samplerate, state.value().blocksize); }
+    if (state) { resetCore(state.value()); }
   });
 }
 
@@ -115,11 +118,11 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
 
   LOG("Prepare to play (samplerate %g, blocksize %d)", samplerate, blocksize);
 
-  state = { samplerate, blocksize };
+  state = { samplerate, { blocksize, blocksize } };
 
   try
   {
-    resetCore(samplerate, blocksize);
+    resetCore(state.value());
   }
   catch(const std::exception& exception)
   {
@@ -211,20 +214,18 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   }
   else if (!core->compatible(channel_samples))
   {
-    const double samplerate = state.value().samplerate;
+    State oldstate = state.value();
+    State newstate = oldstate;
 
-    const int blocksize0 = state.value().blocksize;
-    const int blocksize1 = channel_samples;
+    newstate.blocksize.min = channel_samples;
 
-    juce::ignoreUnused(blocksize0, blocksize1);
-
-    LOG("Change block size from %d to %d", blocksize0, blocksize1);
+    LOG("Change blocksize from %d to %d", oldstate.blocksize.min, newstate.blocksize.min);
 
     try
     {
-      resetCore(samplerate, blocksize1);
+      resetCore(newstate);
 
-      state = { samplerate, blocksize1 };
+      state = newstate;
 
       process_mono_input();
       process_stereo_output();
@@ -252,7 +253,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   if (LAP())
   {
     const double samplerate = state.value_or(nostate).samplerate;
-    const int blocksize  = state.value_or(nostate).blocksize;
+    const int blocksize  = state.value_or(nostate).blocksize.min;
 
     juce::ignoreUnused(samplerate, blocksize);
 
@@ -260,18 +261,33 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   }
 }
 
-void Processor::resetCore(const double samplerate, const int blocksize)
+void Processor::resetCore(const State& state)
 {
+  const bool lowlatency = parameters->lowlatency();
+
+  const double samplerate = state.samplerate;
+  const int blocksize = lowlatency ? state.blocksize.min : state.blocksize.max;
   const int dftsize = parameters->dftsize(blocksize);
   const int overlap = parameters->overlap(blocksize);
 
   LOG("Reset core (dftsize %d, overlap %d)", dftsize, overlap);
 
-  core = std::make_unique<Core>(
-    samplerate,
-    blocksize,
-    dftsize,
-    overlap);
+  if (lowlatency)
+  {
+    core = std::make_unique<InstantCore>(
+      samplerate,
+      blocksize,
+      dftsize,
+      overlap);
+  }
+  else
+  {
+    core = std::make_unique<DelayedCore>(
+      samplerate,
+      blocksize,
+      dftsize,
+      overlap);
+  }
 
   core->normalize(parameters->normalize());
   core->quefrency(parameters->quefrency());

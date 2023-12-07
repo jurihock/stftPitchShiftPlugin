@@ -35,12 +35,16 @@ Parameters::Parameters(juce::AudioProcessor& process) :
     { "stages", schema }, "Pitch stages", 1, maxstages, maxstages));
 
   parameters.add("reset", new juce::AudioParameterChoice(
-    { "ola", schema }, "STFT overlap", { "4", "8", "16", "32", "64" }, 0,
+    { "stftoverlap", schema }, "STFT overlap", { "4", "8", "16", "32", "64" }, 0,
     juce::AudioParameterChoiceAttributes()));
 
   parameters.add("reset", new juce::AudioParameterChoice(
-    { "dft", schema }, "DFT size", { "1024", "2048", "4096" }, 0,
+    { "dftsize", schema }, "DFT size", { "1024", "2048", "4096" }, 0,
     juce::AudioParameterChoiceAttributes()));
+
+  parameters.add("reset", new juce::AudioParameterBool(
+    { "lowlatency", schema }, "Low latency", false,
+    juce::AudioParameterBoolAttributes()));
 }
 
 Parameters::~Parameters()
@@ -127,7 +131,7 @@ std::vector<double> Parameters::pitch() const
 
 int Parameters::dftsize(const int blocksize) const
 {
-  int dftsize = std::stoi(parameters.get<std::string>("dft"));
+  int dftsize = std::stoi(parameters.get<std::string>("dftsize"));
 
   dftsize = std::max(dftsize, 1024);
   dftsize = next_power_of_two(dftsize);
@@ -142,7 +146,7 @@ int Parameters::dftsize(const int blocksize) const
 
 int Parameters::overlap(const int blocksize) const
 {
-  int overlap = std::stoi(parameters.get<std::string>("ola"));
+  int overlap = std::stoi(parameters.get<std::string>("stftoverlap"));
 
   overlap = std::max(overlap, 1);
   overlap = prev_power_of_two(overlap);
@@ -153,6 +157,11 @@ int Parameters::overlap(const int blocksize) const
   }
 
   return overlap;
+}
+
+bool Parameters::lowlatency() const
+{
+  return parameters.get<bool>("lowlatency");
 }
 
 void Parameters::read(const void* data, const int size)
@@ -187,8 +196,9 @@ void Parameters::read(const void* data, const int size)
     }
 
     parameters.read<int>("stages", *xml);
-    parameters.read<std::string>("ola", *xml);
-    parameters.read<std::string>("dft", *xml);
+    parameters.read<std::string>("stftoverlap", *xml);
+    parameters.read<std::string>("dftsize", *xml);
+    parameters.read<bool>("lowlatency", *xml);
   }
   catch(const std::exception& exception)
   {
@@ -219,8 +229,9 @@ void Parameters::write(juce::MemoryBlock& data)
     }
 
     parameters.write<int>("stages", *xml);
-    parameters.write<std::string>("ola", *xml);
-    parameters.write<std::string>("dft", *xml);
+    parameters.write<std::string>("stftoverlap", *xml);
+    parameters.write<std::string>("dftsize", *xml);
+    parameters.write<bool>("lowlatency", *xml);
 
     LOG(xml->toString(juce::XmlElement::TextFormat().withoutHeader()));
 

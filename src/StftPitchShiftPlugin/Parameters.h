@@ -30,6 +30,7 @@ public:
   std::vector<double> pitch() const;
   int dftsize(const int blocksize) const;
   int overlap(const int blocksize) const;
+  bool lowlatency() const;
 
   void read(const void* data, const int size);
   void write(juce::MemoryBlock& data);
