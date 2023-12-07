@@ -43,8 +43,8 @@ void DelayedCore::process(const std::span<const float> input, const std::span<fl
     samples %= maxsamples;
 
     InstantCore::process(
-      std::span(buffer.input.begin(), maxsamples),
-      std::span(buffer.output.begin(), maxsamples));
+      std::span(buffer.input.data(), maxsamples),
+      std::span(buffer.output.data(), maxsamples));
   }
 
   // copy new output samples back
