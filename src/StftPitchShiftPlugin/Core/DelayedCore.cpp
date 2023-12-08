@@ -17,7 +17,7 @@ DelayedCore::~DelayedCore()
 
 int DelayedCore::latency() const
 {
-  return get_synthesis_window_size() + InstantCore::latency();
+  return static_cast<int>(get_synthesis_window_size()) + InstantCore::latency();
 }
 
 bool DelayedCore::compatible(const int blocksize) const
