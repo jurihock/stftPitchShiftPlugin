@@ -10,6 +10,7 @@ public:
   DelayedCore(const double samplerate, const int blocksize, const int dftsize, const int overlap);
   ~DelayedCore();
 
+  int latency() const override;
   bool compatible(const int blocksize) const override;
   void process(const std::span<const float> input, const std::span<float> output) override;
 

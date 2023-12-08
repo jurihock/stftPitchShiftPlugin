@@ -18,6 +18,7 @@ public:
   void timbre(double value);
   void pitch(std::vector<double> values);
 
+  virtual int latency() const = 0;
   virtual bool compatible(const int blocksize) const = 0;
   virtual void process(const std::span<const float> input, const std::span<float> output) = 0;
 

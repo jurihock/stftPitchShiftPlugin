@@ -293,6 +293,8 @@ void Processor::resetCore(const State& state)
   core->quefrency(parameters->quefrency());
   core->timbre(parameters->timbre());
   core->pitch(parameters->pitch());
+
+  setLatencySamples(core->latency());
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new Processor(); }
