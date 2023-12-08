@@ -45,9 +45,12 @@ void DelayedCore::process(const std::span<const float> input, const std::span<fl
   // start processing as soon as enough samples are buffered
   if ((samples += minsamples) >= maxsamples)
   {
+    const auto x = buffer.input.data() + buffer.input.size();
+    const auto y = buffer.output.data() + buffer.output.size();
+
     InstantCore::process(
-      std::span(buffer.input.end() - samples, maxsamples),
-      std::span(buffer.output.end() - samples, maxsamples));
+      std::span(x - samples, maxsamples),
+      std::span(y - samples, maxsamples));
 
     samples %= maxsamples;
   }
