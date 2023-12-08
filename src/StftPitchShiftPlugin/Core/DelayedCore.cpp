@@ -3,7 +3,7 @@
 DelayedCore::DelayedCore(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
   InstantCore(samplerate, blocksize, dftsize, overlap)
 {
-  const auto total_buffer_size = blocksize + blocksize;
+  const auto total_buffer_size = get_synthesis_window_size() + get_synthesis_window_size();
 
   buffer.input.resize(total_buffer_size);
   buffer.output.resize(total_buffer_size);
@@ -45,11 +45,11 @@ void DelayedCore::process(const std::span<const float> input, const std::span<fl
   // start processing as soon as enough samples are buffered
   if ((samples += minsamples) >= maxsamples)
   {
-    samples %= maxsamples;
-
     InstantCore::process(
-      std::span(buffer.input.data(), maxsamples),
-      std::span(buffer.output.data(), maxsamples));
+      std::span(buffer.input.end() - samples, maxsamples),
+      std::span(buffer.output.end() - samples, maxsamples));
+
+    samples %= maxsamples;
   }
 
   // copy new output samples back
