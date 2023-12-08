@@ -15,7 +15,7 @@ InstantCore::~InstantCore()
 
 int InstantCore::latency() const
 {
-  return static_cast<int>(get_synthesis_window_size());
+  return static_cast<int>(get_analysis_window_size());
 }
 
 bool InstantCore::compatible(const int blocksize) const
