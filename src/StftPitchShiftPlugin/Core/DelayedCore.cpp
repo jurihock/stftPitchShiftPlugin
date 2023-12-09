@@ -3,7 +3,7 @@
 DelayedCore::DelayedCore(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
   InstantCore(samplerate, blocksize, dftsize, overlap)
 {
-  const auto total_buffer_size = get_synthesis_window_size() + get_synthesis_window_size();
+  const auto total_buffer_size = get_synthesis_window_size() * 2;
 
   buffer.input.resize(total_buffer_size);
   buffer.output.resize(total_buffer_size);
@@ -17,7 +17,7 @@ DelayedCore::~DelayedCore()
 
 int DelayedCore::latency() const
 {
-  return static_cast<int>(get_synthesis_window_size()) + InstantCore::latency();
+  return static_cast<int>(get_synthesis_window_size() * 2) + InstantCore::latency();
 }
 
 bool DelayedCore::compatible(const int blocksize) const
