@@ -1,9 +1,9 @@
 #include <StftPitchShiftPlugin/Core/DelayedCore.h>
 
 DelayedCore::DelayedCore(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
-  InstantCore(samplerate, blocksize, dftsize, overlap)
+  InstantCore(samplerate, dftsize + dftsize, dftsize, overlap), host_block_size(blocksize)
 {
-  const auto total_buffer_size = get_synthesis_window_size() * 2;
+  const auto total_buffer_size = analysis_window_size + synthesis_window_size;
 
   buffer.input.resize(total_buffer_size);
   buffer.output.resize(total_buffer_size);
@@ -17,18 +17,18 @@ DelayedCore::~DelayedCore()
 
 int DelayedCore::latency() const
 {
-  return static_cast<int>(get_synthesis_window_size() * 2) + InstantCore::latency();
+  return 6 * dftsize - host_block_size;
 }
 
 bool DelayedCore::compatible(const int blocksize) const
 {
-  return static_cast<size_t>(blocksize) <= get_synthesis_window_size();
+  return static_cast<size_t>(blocksize) <= synthesis_window_size;
 }
 
 void DelayedCore::process(const std::span<const float> input, const std::span<float> output)
 {
   const auto minsamples = input.size();
-  const auto maxsamples = get_synthesis_window_size();
+  const auto maxsamples = synthesis_window_size;
 
   // shift input buffer
   std::copy(

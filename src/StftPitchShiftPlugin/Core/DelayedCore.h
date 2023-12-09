@@ -16,6 +16,8 @@ public:
 
 private:
 
+  const int host_block_size;
+
   struct { std::vector<float> input, output; } buffer;
 
   size_t samples;

@@ -3,7 +3,7 @@
 InstantCore::InstantCore(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
   Core(samplerate, blocksize, dftsize, overlap)
 {
-  const auto total_buffer_size = get_analysis_window_size() + get_synthesis_window_size();
+  const auto total_buffer_size = analysis_window_size + synthesis_window_size;
 
   buffer.input.resize(total_buffer_size);
   buffer.output.resize(total_buffer_size);
@@ -15,19 +15,16 @@ InstantCore::~InstantCore()
 
 int InstantCore::latency() const
 {
-  return static_cast<int>(get_analysis_window_size() - get_synthesis_window_size());
+  return static_cast<int>(analysis_window_size - synthesis_window_size);
 }
 
 bool InstantCore::compatible(const int blocksize) const
 {
-  return static_cast<size_t>(blocksize) == get_synthesis_window_size();
+  return static_cast<size_t>(blocksize) == synthesis_window_size;
 }
 
 void InstantCore::process(const std::span<const float> input, const std::span<float> output)
 {
-  const auto analysis_window_size  = get_analysis_window_size();
-  const auto synthesis_window_size = get_synthesis_window_size();
-
   // shift input buffer
   std::copy(
     buffer.input.begin() + synthesis_window_size,

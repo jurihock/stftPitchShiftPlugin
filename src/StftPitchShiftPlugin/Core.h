@@ -24,14 +24,16 @@ public:
 
 protected:
 
-  size_t get_analysis_window_size() const;
-  size_t get_synthesis_window_size() const;
+  const double samplerate;
+  const int blocksize;
+  const int dftsize;
+  const int overlap;
+  const size_t analysis_window_size;
+  const size_t synthesis_window_size;
 
   void stft_pitch_shift(const std::span<const double> input, const std::span<double> output) const;
 
 private:
-
-  struct { size_t analysis_window_size, synthesis_window_size; } config;
 
   std::unique_ptr<stftpitchshift::STFT<double>> stft;
   std::unique_ptr<stftpitchshift::StftPitchShiftCore<double>> core;
