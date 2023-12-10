@@ -294,7 +294,11 @@ void Processor::resetCore(const State& state)
   core->timbre(parameters->timbre());
   core->pitch(parameters->pitch());
 
-  setLatencySamples(core->latency());
+  const int latency = core->latency();
+
+  LOG("Latency %d (%d ms)", latency, static_cast<int>(1e+3 * latency / samplerate));
+
+  setLatencySamples(latency);
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new Processor(); }
