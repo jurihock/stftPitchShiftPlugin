@@ -46,7 +46,7 @@ private:
   struct State
   {
     double samplerate {};
-    int    blocksize  {};
+    struct { int min, max; } blocksize {};
   };
 
   const State nostate;
@@ -56,7 +56,7 @@ private:
   std::unique_ptr<Core> core;
   std::unique_ptr<Parameters> parameters;
 
-  void resetCore(const double samplerate, const int blocksize);
+  void resetCore(const State& state);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Processor)
 

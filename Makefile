@@ -39,6 +39,7 @@ unplug:
 	@rm -rf ~/Library/Audio/Plug-Ins/Components/$(PLUGIN).component
 
 reset: unplug
+	@rm -rf ~/Library/Application\ Support/Audacity/plugin*.cfg
 	@rm -rf ~/Library/Caches/AudioUnitCache
 	@sudo killall -9 AudioComponentRegistrar
 	@auval -a

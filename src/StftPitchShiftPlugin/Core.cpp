@@ -1,20 +1,14 @@
 #include <StftPitchShiftPlugin/Core.h>
 
-Core::Core(const double samplerate, const int blocksize, const int dftsize, const int overlap)
+Core::Core(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
+  samplerate(samplerate), blocksize(blocksize), dftsize(dftsize), overlap(overlap),
+  analysis_window_size(static_cast<size_t>(dftsize + dftsize)),
+  synthesis_window_size(static_cast<size_t>(blocksize))
 {
-  const auto analysis_window_size  = static_cast<size_t>(dftsize + dftsize);
-  const auto synthesis_window_size = static_cast<size_t>(blocksize);
-
   const auto winsize = std::make_tuple(analysis_window_size, synthesis_window_size);
   const auto hopsize = synthesis_window_size / static_cast<size_t>(overlap);
 
   const auto fft = std::make_shared<FFT>();
-
-  config.analysis_window_size = analysis_window_size;
-  config.synthesis_window_size = synthesis_window_size;
-
-  buffer.input.resize(analysis_window_size + synthesis_window_size);
-  buffer.output.resize(analysis_window_size + synthesis_window_size);
 
   stft = std::make_unique<stftpitchshift::STFT<double>>(fft, winsize, hopsize);
   core = std::make_unique<stftpitchshift::StftPitchShiftCore<double>>(fft, winsize, hopsize, samplerate);
@@ -44,51 +38,10 @@ void Core::pitch(std::vector<double> values)
   core->factors(values);
 }
 
-bool Core::compatible(const int blocksize) const
+void Core::stft_pitch_shift(const std::span<const double> input, const std::span<double> output) const
 {
-  return static_cast<size_t>(blocksize) == config.synthesis_window_size;
-}
-
-void Core::process(const std::span<const float> input, const std::span<float> output)
-{
-  const auto analysis_window_size  = config.analysis_window_size;
-  const auto synthesis_window_size = config.synthesis_window_size;
-
-  // shift input buffer
-  std::copy(
-    buffer.input.begin() + synthesis_window_size,
-    buffer.input.end(),
-    buffer.input.begin());
-
-  // copy new input samples
-  std::transform(
-    input.begin(),
-    input.end(),
-    buffer.input.begin() + analysis_window_size,
-    transform<float, double>);
-
-  // apply pitch shifting within the built-in STFT routine
-  (*stft)(buffer.input, buffer.output, [&](std::span<std::complex<double>> dft)
+  (*stft)(input, output, [&](std::span<std::complex<double>> dft)
   {
     core->shiftpitch(dft);
   });
-
-  // copy new output samples back
-  std::transform(
-    buffer.output.begin() - synthesis_window_size + analysis_window_size,
-    buffer.output.end() - synthesis_window_size,
-    output.begin(),
-    transform<double, float>);
-
-  // shift output buffer
-  std::copy(
-    buffer.output.begin() + synthesis_window_size,
-    buffer.output.end(),
-    buffer.output.begin());
-
-  // prepare for the next callback
-  std::fill(
-    buffer.output.begin() + analysis_window_size,
-    buffer.output.end(),
-    0);
 }
