@@ -39,7 +39,7 @@ Parameters::Parameters(juce::AudioProcessor& process) :
     juce::AudioParameterChoiceAttributes()));
 
   parameters.add("reset", new juce::AudioParameterChoice(
-    { "dftsize", schema }, "DFT size", { "1024", "2048", "4096" }, 0,
+    { "dftsize", schema }, "DFT size", { "512", "1024", "2048" }, 1,
     juce::AudioParameterChoiceAttributes()));
 
   parameters.add("reset", new juce::AudioParameterBool(
@@ -133,7 +133,7 @@ int Parameters::dftsize(const int blocksize) const
 {
   int dftsize = std::stoi(parameters.get<std::string>("dftsize"));
 
-  dftsize = std::max(dftsize, 1024);
+  dftsize = std::max(dftsize, 512);
   dftsize = next_power_of_two(dftsize);
 
   while ((dftsize * 2 < blocksize) && (dftsize < 65536))
