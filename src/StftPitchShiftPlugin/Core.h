@@ -20,7 +20,9 @@ public:
 
   virtual int latency() const = 0;
   virtual bool compatible(const int blocksize) const = 0;
-  virtual void process(const std::span<const float> input, const std::span<float> output) = 0;
+
+  virtual void dry(const std::span<const float> input, const std::span<float> output) = 0;
+  virtual void wet(const std::span<const float> input, const std::span<float> output) = 0;
 
 protected:
 

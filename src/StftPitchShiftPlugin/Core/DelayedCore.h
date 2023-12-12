@@ -12,7 +12,9 @@ public:
 
   int latency() const override;
   bool compatible(const int blocksize) const override;
-  void process(const std::span<const float> input, const std::span<float> output) override;
+
+  void dry(const std::span<const float> input, const std::span<float> output) override;
+  void wet(const std::span<const float> input, const std::span<float> output) override;
 
 private:
 
@@ -21,5 +23,8 @@ private:
   struct { std::vector<float> input, output; } buffer;
 
   size_t samples;
+
+  void process(const std::span<const float> input, const std::span<float> output,
+               std::function<void(std::span<float> x, std::span<float> y)> callback);
 
 };

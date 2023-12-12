@@ -182,7 +182,14 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
       audio.getWritePointer(0),
       static_cast<size_t>(channel_samples));
 
-    core->process(input, output);
+    if (parameters->bypass())
+    {
+      core->dry(input, output);
+    }
+    else
+    {
+      core->wet(input, output);
+    }
   };
 
   const auto process_stereo_output = [&](const std::string& error = "")
@@ -200,11 +207,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
   TIC();
 
-  if (parameters->bypass() || (channel_samples < 4))
-  {
-    process_stereo_output();
-  }
-  else if (!state)
+  if (!state)
   {
     process_stereo_output("state is not initialized");
   }

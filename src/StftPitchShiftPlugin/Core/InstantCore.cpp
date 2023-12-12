@@ -23,7 +23,24 @@ bool InstantCore::compatible(const int blocksize) const
   return static_cast<size_t>(blocksize) == synthesis_window_size;
 }
 
-void InstantCore::process(const std::span<const float> input, const std::span<float> output)
+void InstantCore::dry(const std::span<const float> input, const std::span<float> output)
+{
+  process(input, output, [](std::span<double> x, std::span<double> y)
+  {
+    std::copy(x.begin(), x.end(), y.begin());
+  });
+}
+
+void InstantCore::wet(const std::span<const float> input, const std::span<float> output)
+{
+  process(input, output, [&](std::span<double> x, std::span<double> y)
+  {
+    stft_pitch_shift(x, y);
+  });
+}
+
+void InstantCore::process(const std::span<const float> input, const std::span<float> output,
+                          std::function<void(std::span<double> x, std::span<double> y)> callback)
 {
   // shift input buffer
   std::copy(
@@ -38,8 +55,8 @@ void InstantCore::process(const std::span<const float> input, const std::span<fl
     buffer.input.begin() + analysis_window_size,
     transform<float, double>);
 
-  // apply pitch shifting within the built-in STFT routine
-  stft_pitch_shift(buffer.input, buffer.output);
+  // start processing
+  callback(buffer.input, buffer.output);
 
   // copy new output samples back
   std::transform(

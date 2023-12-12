@@ -25,7 +25,24 @@ bool DelayedCore::compatible(const int blocksize) const
   return static_cast<size_t>(blocksize) <= synthesis_window_size;
 }
 
-void DelayedCore::process(const std::span<const float> input, const std::span<float> output)
+void DelayedCore::dry(const std::span<const float> input, const std::span<float> output)
+{
+  process(input, output, [&](std::span<float> x, std::span<float> y)
+  {
+    InstantCore::dry(x, y);
+  });
+}
+
+void DelayedCore::wet(const std::span<const float> input, const std::span<float> output)
+{
+  process(input, output, [&](std::span<float> x, std::span<float> y)
+  {
+    InstantCore::wet(x, y);
+  });
+}
+
+void DelayedCore::process(const std::span<const float> input, const std::span<float> output,
+                          std::function<void(std::span<float> x, std::span<float> y)> callback)
 {
   const auto minsamples = input.size();
   const auto maxsamples = synthesis_window_size;
@@ -48,7 +65,7 @@ void DelayedCore::process(const std::span<const float> input, const std::span<fl
     const auto x = buffer.input.data() + buffer.input.size();
     const auto y = buffer.output.data() + buffer.output.size();
 
-    InstantCore::process(
+    callback(
       std::span(x - samples, maxsamples),
       std::span(y - samples, maxsamples));
 

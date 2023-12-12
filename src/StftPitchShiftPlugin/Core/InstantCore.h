@@ -12,7 +12,9 @@ public:
 
   int latency() const override;
   bool compatible(const int blocksize) const override;
-  void process(const std::span<const float> input, const std::span<float> output) override;
+
+  void dry(const std::span<const float> input, const std::span<float> output) override;
+  void wet(const std::span<const float> input, const std::span<float> output) override;
 
 private:
 
@@ -20,5 +22,8 @@ private:
 
   template<typename X, typename Y>
   static Y transform(const X x) { return static_cast<Y>(x); }
+
+  void process(const std::span<const float> input, const std::span<float> output,
+               std::function<void(std::span<double> x, std::span<double> y)> callback);
 
 };
