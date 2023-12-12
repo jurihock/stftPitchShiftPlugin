@@ -23,7 +23,7 @@ Following customizations are currently available:
 ## Automation
 
 - All parameters are adjustable at runtime, the changes take effect immediately.
-- Manually adjusting parameters `11`, `12`, and `13` causes a complete reset of the internal signal processing. Permanently changing these two parameters at runtime is not recommended.
+- Manually adjusting parameters `11`, `12`, and `13` causes a complete reset of the internal signal processing. It is not recommended to permanently change these parameters at runtime.
 - Additionally, parameters `11` and `12` are automatically adapted for extremely small and large block sizes. This usually happens only once at startup or on each manual change of `11` and `12`.
 
 ## Routing
