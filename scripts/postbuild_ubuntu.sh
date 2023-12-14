@@ -17,3 +17,10 @@ PLUGINVAL=${OUTPUT}/_deps/pluginval-src/pluginval
 export SKIP_GUI_TESTS=1
 
 "${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/VST3/StftPitchShiftPlugin.vst3" || exit $?
+
+# Zip binaries to preserve file permissions during artifact upload.
+# https://github.com/actions/upload-artifact/issues/38
+# https://github.com/actions/upload-artifact#permission-loss
+pushd "${ARTEFACTS}"
+zip -rm StftPitchShiftPlugin.zip .
+popd

@@ -28,3 +28,10 @@ if [ -d ~/Library/Audio/Plug-Ins/Components ]; then
   rm -rf ~/Library/Audio/Plug-Ins/Components/StftPitchShiftPlugin.component || exit $?
 
 fi
+
+# Zip binaries to preserve file permissions during artifact upload.
+# https://github.com/actions/upload-artifact/issues/38
+# https://github.com/actions/upload-artifact#permission-loss
+pushd "${ARTEFACTS}"
+zip -rm StftPitchShiftPlugin.zip .
+popd
