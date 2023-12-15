@@ -18,4 +18,5 @@ set ARTEFACTS=%OUTPUT%\StftPitchShiftPlugin_artefacts\%CONFIG%
 cmake %ARGS% -S "%INPUT%" -B "%OUTPUT%" || exit /b
 cmake --build "%OUTPUT%" --config %CONFIG% || exit /b
 
+echo DONE!
 dir /b "%ARTEFACTS%"

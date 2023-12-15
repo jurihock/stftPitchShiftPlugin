@@ -22,16 +22,16 @@ PLUGINVAL=${OUTPUT}/_deps/pluginval-src/Contents/MacOS/pluginval
 # https://melatonin.dev/blog/pluginval-is-a-plugin-devs-best-friend#troubleshooting-pluginval-no-types-found
 if [ -d ~/Library/Audio/Plug-Ins/Components ]; then
 
-  cp -rf "${ARTEFACTS}/AU/StftPitchShiftPlugin.component" ~/Library/Audio/Plug-Ins/Components || exit $?
+  cp -rfv "${ARTEFACTS}/AU/StftPitchShiftPlugin.component" ~/Library/Audio/Plug-Ins/Components || exit $?
 
   "${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/AU/StftPitchShiftPlugin.component" || exit $?
 
-  rm -rf ~/Library/Audio/Plug-Ins/Components/StftPitchShiftPlugin.component || exit $?
+  rm -rfv ~/Library/Audio/Plug-Ins/Components/StftPitchShiftPlugin.component || exit $?
 
 fi
 
 # Delete intermediate files.
-rm "${ARTEFACTS}/libStftPitchShiftPlugin_SharedCode.a" || exit $?
+rm -fv "${ARTEFACTS}/libStftPitchShiftPlugin_SharedCode.a" || exit $?
 
 # Zip binaries to preserve file permissions during artifact upload.
 # https://github.com/actions/upload-artifact/issues/38

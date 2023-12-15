@@ -20,7 +20,7 @@ export SKIP_GUI_TESTS=1
 "${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/VST3/StftPitchShiftPlugin.vst3" || exit $?
 
 # Delete intermediate files.
-rm "${ARTEFACTS}/libStftPitchShiftPlugin_SharedCode.a" || exit $?
+rm -fv "${ARTEFACTS}/libStftPitchShiftPlugin_SharedCode.a" || exit $?
 
 # Zip binaries to preserve file permissions during artifact upload.
 # https://github.com/actions/upload-artifact/issues/38
