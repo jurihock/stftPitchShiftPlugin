@@ -11,6 +11,7 @@ OUTPUT=${ROOT}/build
 ARTEFACTS=${OUTPUT}/StftPitchShiftPlugin_artefacts/${CONFIG}
 PLUGINVAL=${OUTPUT}/_deps/pluginval-src/Contents/MacOS/pluginval
 
+# Execute pluginval.
 "${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/VST3/StftPitchShiftPlugin.vst3" || exit $?
 
 # Are you trying to validate a .component on macOS?
@@ -29,9 +30,12 @@ if [ -d ~/Library/Audio/Plug-Ins/Components ]; then
 
 fi
 
+# Delete intermediate files.
+rm "${ARTEFACTS}/libStftPitchShiftPlugin_SharedCode.a" || exit $?
+
 # Zip binaries to preserve file permissions during artifact upload.
 # https://github.com/actions/upload-artifact/issues/38
 # https://github.com/actions/upload-artifact#permission-loss
 pushd "${ARTEFACTS}"
-zip -rm StftPitchShiftPlugin.zip .
+zip -rm StftPitchShiftPlugin.zip . || exit $?
 popd
