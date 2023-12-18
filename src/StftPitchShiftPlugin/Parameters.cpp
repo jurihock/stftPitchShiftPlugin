@@ -39,7 +39,7 @@ Parameters::Parameters(juce::AudioProcessor& process) :
     juce::AudioParameterChoiceAttributes()));
 
   parameters.add("reset", new juce::AudioParameterChoice(
-    { "dftsize", schema }, "DFT size", { "512", "1024", "2048" }, 1,
+    { "dftsize", schema }, "DFT size", { "512", "1024", "2048", "4096", "8192" }, 1,
     juce::AudioParameterChoiceAttributes()));
 
   parameters.add("reset", new juce::AudioParameterBool(
