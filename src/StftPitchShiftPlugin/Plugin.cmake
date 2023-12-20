@@ -51,16 +51,19 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 target_link_libraries(${CMAKE_PROJECT_NAME}
   PRIVATE
     juce::juce_audio_utils
+    jive::jive_layouts
+    jive::jive_style_sheets
   PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags)
 
 target_compile_definitions(${CMAKE_PROJECT_NAME}
   PUBLIC
+    DONT_SET_USING_JUCE_NAMESPACE=1
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
-    DONT_SET_USING_JUCE_NAMESPACE=1)
+    JIVE_GUI_ITEMS_HAVE_STYLE_SHEETS=1)
 
 if(FASTMATH)
 

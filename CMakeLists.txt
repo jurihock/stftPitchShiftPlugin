@@ -11,6 +11,7 @@ option(WARNINGS  "Enable all warnings" ON)
 
 include("${CMAKE_CURRENT_LIST_DIR}/lib/CPM.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/JUCE.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/lib/JIVE.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/Pluginval.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/PocketFFT.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/StftPitchShift.cmake")
