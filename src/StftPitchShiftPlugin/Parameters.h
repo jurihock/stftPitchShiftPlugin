@@ -6,12 +6,12 @@
 
 #include <bit>
 
-class Parameters final
+class Parameters final : public GenericParameterContainer
 {
 
 public:
 
-  explicit Parameters(juce::AudioProcessor& process);
+  Parameters(juce::AudioProcessor& process);
   ~Parameters();
 
   void onbypass(std::function<void()> callback);
@@ -20,8 +20,6 @@ public:
   void ontimbre(std::function<void()> callback);
   void onpitch(std::function<void()> callback);
   void onreset(std::function<void()> callback);
-
-  juce::AudioProcessorParameter* raw(const std::string& id) const;
 
   bool bypass() const;
   bool normalize() const;
@@ -32,15 +30,13 @@ public:
   int overlap(const int blocksize) const;
   bool lowlatency() const;
 
-  void read(const void* data, const int size);
-  void write(juce::MemoryBlock& data);
+  void load(const void* data, const int size);
+  void save(juce::MemoryBlock& data);
 
 private:
 
   const int schema = 1;
   const int maxstages = 5;
-
-  GenericParameterContainer parameters;
 
   static int prev_power_of_two(const int x)
   {

@@ -6,12 +6,12 @@
 #include <StftPitchShiftPlugin/Logger.h>
 
 Processor::Processor() :
-  AudioProcessor(
-    BusesProperties()
+  juce::AudioProcessor(
+    juce::AudioProcessor::BusesProperties()
       .withInput("Input",   juce::AudioChannelSet::stereo(), true)
       .withOutput("Output", juce::AudioChannelSet::stereo(), true))
 {
-  parameters = std::make_unique<Parameters>(*this);
+  parameters = std::make_shared<Parameters>(*this);
 
   parameters->onnormalize([&]()
   {
@@ -56,7 +56,7 @@ const juce::String Processor::getName() const
 }
 
 bool Processor::hasEditor() const { return true; }
-juce::AudioProcessorEditor* Processor::createEditor() { return new Editor(*this); }
+juce::AudioProcessorEditor* Processor::createEditor() { return new Editor(*this, parameters); }
 
 bool Processor::isMidiEffect() const { return false; }
 bool Processor::acceptsMidi() const { return false; }
@@ -68,7 +68,7 @@ void Processor::changeProgramName(int index, const juce::String& name) { juce::i
 const juce::String Processor::getProgramName(int index) { juce::ignoreUnused(index); return {}; }
 
 double Processor::getTailLengthSeconds() const { return 0; }
-juce::AudioProcessorParameter* Processor::getBypassParameter() const { return parameters->raw("bypass"); }
+juce::AudioProcessorParameter* Processor::getBypassParameter() const { return parameters->get("bypass"); }
 
 bool Processor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
@@ -85,16 +85,16 @@ bool Processor::isBusesLayoutSupported(const BusesLayout& layouts) const
 
 void Processor::getStateInformation(juce::MemoryBlock& data)
 {
-  LOG("Write plugin state");
+  LOG("Save plugin state");
 
-  parameters->write(data);
+  parameters->save(data);
 }
 
 void Processor::setStateInformation(const void* data, int size)
 {
-  LOG("Read plugin state");
+  LOG("Load plugin state");
 
-  parameters->read(data, size);
+  parameters->load(data, size);
 }
 
 void Processor::prepareToPlay(double samplerate, int blocksize)

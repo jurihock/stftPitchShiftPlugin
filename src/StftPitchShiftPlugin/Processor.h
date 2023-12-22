@@ -13,7 +13,7 @@ class Processor final : public juce::AudioProcessor
 public:
 
   Processor();
-  ~Processor() override;
+  ~Processor();
 
   const juce::String getName() const override;
 
@@ -54,7 +54,7 @@ private:
   std::mutex mutex;
   std::optional<State> state;
   std::unique_ptr<Core> core;
-  std::unique_ptr<Parameters> parameters;
+  std::shared_ptr<Parameters> parameters;
 
   void resetCore(const State& state);
 

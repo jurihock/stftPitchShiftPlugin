@@ -20,10 +20,10 @@ private:
 
   struct { std::vector<double> input, output; } buffer;
 
-  template<typename X, typename Y>
-  static Y transform(const X x) { return static_cast<Y>(x); }
-
   void process(const std::span<const float> input, const std::span<float> output,
                std::function<void(std::span<double> x, std::span<double> y)> callback);
+
+  template<typename X, typename Y>
+  static Y transform(const X x) { return static_cast<Y>(x); }
 
 };
