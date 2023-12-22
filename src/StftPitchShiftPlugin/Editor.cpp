@@ -133,7 +133,7 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> params
       find<juce::Slider>(root, "pitch5-slider")
     };
 
-    auto stages = parameters->get<int>("stages");
+    auto stages = static_cast<size_t>(parameters->get<int>("stages"));
 
     for (size_t i = 0; i < pitch_sliders.size(); ++i)
     {
