@@ -29,6 +29,7 @@ jobs:
     - name: Setup (Windows)
       if:   matrix.os == 'windows-latest'
       run:  .\scripts\prebuild_windows.bat
+      shell: cmd
 
     - name: Build (MacOS)
       if:   matrix.os == 'macos-latest'
@@ -41,6 +42,7 @@ jobs:
     - name: Build (Windows)
       if:   matrix.os == 'windows-latest'
       run:  .\scripts\build_windows.bat
+      shell: cmd
 
     - name: Test (MacOS)
       if:   matrix.os == 'macos-latest'
@@ -53,6 +55,7 @@ jobs:
     - name: Test (Windows)
       if:   matrix.os == 'windows-latest'
       run:  .\scripts\postbuild_windows.bat
+      shell: cmd
 
     - name: Archive build artefacts
       if:   github.event_name == 'push'
