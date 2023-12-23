@@ -21,6 +21,8 @@ private:
 
   struct
   {
+    std::vector<std::shared_ptr<juce::ButtonParameterAttachment>> button;
+    std::vector<std::shared_ptr<juce::ComboBoxParameterAttachment>> combo;
     std::vector<std::shared_ptr<juce::SliderParameterAttachment>> slider;
   } attachments;
 

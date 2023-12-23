@@ -6,11 +6,11 @@ Parameters::Parameters(juce::AudioProcessor& process) :
   GenericParameterContainer(process)
 {
   add("bypass", new juce::AudioParameterBool(
-    { "bypass", schema }, "Bypass pitch shifting", false,
+    { "bypass", schema }, "Bypass", false,
     juce::AudioParameterBoolAttributes()));
 
   add("normalize", new juce::AudioParameterBool(
-    { "normalize", schema }, "Normalize output", false,
+    { "normalize", schema }, "Normalize", false,
     juce::AudioParameterBoolAttributes()));
 
   add("quefrency", new juce::AudioParameterFloat(
@@ -35,11 +35,11 @@ Parameters::Parameters(juce::AudioProcessor& process) :
     { "stages", schema }, "Pitch stages", 1, maxstages, maxstages));
 
   add("reset", new juce::AudioParameterChoice(
-    { "stftoverlap", schema }, "STFT overlap", { "4", "8", "16", "32", "64" }, 0,
+    { "stftoverlap", schema }, "Overlap", { "4", "8", "16", "32", "64" }, 0,
     juce::AudioParameterChoiceAttributes()));
 
   add("reset", new juce::AudioParameterChoice(
-    { "dftsize", schema }, "DFT size", { "512", "1024", "2048", "4096", "8192" }, 1,
+    { "dftsize", schema }, "Resolution", { "512", "1024", "2048", "4096", "8192" }, 1,
     juce::AudioParameterChoiceAttributes()));
 
   add("reset", new juce::AudioParameterBool(
