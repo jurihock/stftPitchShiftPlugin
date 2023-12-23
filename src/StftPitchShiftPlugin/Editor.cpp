@@ -118,10 +118,10 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
   {
     auto quefrency = parameters->get<float>("quefrency");
 
-    auto* slider = timbre_slider.front();
+    auto* component = timbre_slider.front()->getParentComponent();
     auto enabled = quefrency > 0;
 
-    slider->setEnabled(enabled);
+    component->setEnabled(enabled);
   };
 
   const std::array<juce::Slider*, 5> pitch_sliders
@@ -140,10 +140,10 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
 
     for (int i = 0; i < maxstages; ++i)
     {
-      auto* slider = pitch_sliders.at(i);
+      auto* component = pitch_sliders.at(i)->getParentComponent();
       auto enabled = i < stages;
 
-      slider->setEnabled(enabled);
+      component->setEnabled(enabled);
     }
   };
 
