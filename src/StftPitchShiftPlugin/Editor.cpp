@@ -81,9 +81,7 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
     auto* name   = find<juce::Label>(root,  id + "-name");
     auto* value  = find<juce::Label>(root,  id + "-value");
 
-    auto unit = parameter->getLabel().isEmpty() ? juce::String("") :
-      juce::String::formatted(" %s", parameter->getLabel().getCharPointer());
-
+    auto unit = parameter->getLabel().isEmpty() ? juce::String("") : (" " + parameter->getLabel());
     auto notify = juce::NotificationType::dontSendNotification;
 
     attachments.slider.push_back(std::make_shared<juce::SliderParameterAttachment>(*parameter, *slider));
@@ -94,15 +92,17 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
     name->setText(parameter->getName(42), notify);
     value->setText(parameter->getText(parameter->getValue(), 42) + unit, notify);
 
-    auto callback = [parameter, value, unit, notify]()
+    auto update_value_sync = [parameter, value, unit, notify]()
     {
-      juce::MessageManager::callAsync([parameter, value, unit, notify]()
-      {
-        value->setText(parameter->getText(parameter->getValue(), 42) + unit, notify);
-      });
+      value->setText(parameter->getText(parameter->getValue(), 42) + unit, notify);
     };
 
-    subscriptions.push_back(parameters->subscribe(id, callback));
+    auto update_value_async = [update_value_sync]()
+    {
+      juce::MessageManager::callAsync(update_value_sync);
+    };
+
+    subscriptions.push_back(parameters->subscribe(id, update_value_async));
 
     // FIXME: how to change font size via style in XML string?
     {
