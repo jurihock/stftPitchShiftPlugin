@@ -107,7 +107,7 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
     // FIXME: how to change font size via style in XML string?
     {
       auto font = name->getFont();
-      font.setHeight(font.getHeight() * 1.1);
+      font.setHeight(font.getHeight() * 1.1f);
       name->setFont(font);
     }
   };
