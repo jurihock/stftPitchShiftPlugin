@@ -1,4 +1,4 @@
-.PHONY: help build clean app log plug unplug reset
+.PHONY: help build clean app log plug unplug reset test
 
 GENERATOR = Ninja
 CONFIG    = Release
@@ -9,6 +9,7 @@ PLUGIN    = StftPitchShiftPlugin
 INPUT     = .
 OUTPUT    = ./build
 ARTEFACTS = $(OUTPUT)/$(PLUGIN)_artefacts/$(CONFIG)
+PLUGINVAL = $(OUTPUT)/_deps/pluginval-src/Contents/MacOS/pluginval
 
 help:
 	@echo build
@@ -18,6 +19,7 @@ help:
 	@echo plug
 	@echo unplug
 	@echo reset
+	@echo test
 
 build:
 	@cmake -G $(GENERATOR) -DCMAKE_BUILD_TYPE=$(CONFIG) $(PLATFORM) $(OPTIONS) -S $(INPUT) -B $(OUTPUT)
@@ -43,3 +45,6 @@ reset: unplug
 	@rm -rf ~/Library/Caches/AudioUnitCache
 	@sudo killall -9 AudioComponentRegistrar
 	@auval -a
+
+test: plug
+	@$(PLUGINVAL) --strictness-level 5 --validate ~/Library/Audio/Plug-Ins/Components/$(PLUGIN).component
