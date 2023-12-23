@@ -1,0 +1,31 @@
+{
+  "folders":
+  [
+    {
+      "path": "."
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "App (debug)",
+      "shell_cmd": "make CONFIG=Debug build app",
+      "working_dir": "${project_path}"
+    },
+    {
+      "name": "App (release)",
+      "shell_cmd": "make CONFIG=Release build app",
+      "working_dir": "${project_path}"
+    },
+    {
+      "name": "Test (debug)",
+      "shell_cmd": "make CONFIG=Debug build test",
+      "working_dir": "${project_path}"
+    },
+    {
+      "name": "Test (release)",
+      "shell_cmd": "make CONFIG=Release build test",
+      "working_dir": "${project_path}"
+    },
+  ]
+}
