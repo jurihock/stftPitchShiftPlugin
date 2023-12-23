@@ -9,7 +9,7 @@ class Editor final : public juce::AudioProcessorEditor
 
 public:
 
-  Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> params);
+  Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parameters);
   ~Editor();
 
   void resized() override;
@@ -23,6 +23,8 @@ private:
   {
     std::vector<std::shared_ptr<juce::SliderParameterAttachment>> slider;
   } attachments;
+
+  std::vector<std::shared_ptr<GenericParameterSubscription>> subscriptions;
 
   template<typename T>
   static T* find(const juce::Component* root, const juce::String& id)

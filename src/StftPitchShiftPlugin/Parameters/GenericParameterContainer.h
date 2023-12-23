@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 
 #include <StftPitchShiftPlugin/Parameters/GenericParameterListener.h>
+#include <StftPitchShiftPlugin/Parameters/GenericParameterSubscription.h>
 
 class GenericParameterContainer
 {
@@ -29,34 +30,19 @@ public:
     static_assert(missing_template_specialization<T>::value);
   }
 
-  void on(const std::string& id_or_ns, std::function<void()> callback)
+  std::shared_ptr<GenericParameterSubscription> subscribe(const std::string& id, const std::function<void()> callback) const
   {
-    callbacks[id_or_ns].push_back(callback);
+    return std::make_shared<GenericParameterSubscription>(get(id), callback);
   }
 
 protected:
 
   void add(const std::string& ns, juce::RangedAudioParameter* parameter)
   {
-    const std::string id = parameter->getParameterID().toStdString();
+    auto id = parameter->getParameterID().toStdString();
 
-    parameters[id] = parameter;
-
-    auto listener = std::make_shared<GenericParameterListener>([id, ns, this]()
+    auto callback = [ns, this]()
     {
-      if (callbacks.contains(id))
-      {
-        for (const auto& callback : callbacks.at(id))
-        {
-          callback();
-        }
-      }
-
-      if (ns == id)
-      {
-        return;
-      }
-
       if (callbacks.contains(ns))
       {
         for (const auto& callback : callbacks.at(ns))
@@ -64,13 +50,18 @@ protected:
           callback();
         }
       }
-    });
+    };
 
-    listeners.push_back(listener);
+    auto subscription = std::make_shared<GenericParameterSubscription>(parameter, callback);
 
-    parameter->addListener(listener.get());
-
+    parameters[id] = parameter;
+    subscriptions.push_back(subscription);
     process.addParameter(parameter);
+  }
+
+  void call(const std::string& ns, std::function<void()> callback)
+  {
+    callbacks[ns].push_back(callback);
   }
 
   template<typename T>
@@ -93,8 +84,8 @@ private:
   juce::AudioProcessor& process;
 
   std::map<std::string, juce::RangedAudioParameter*> parameters;
+  std::vector<std::shared_ptr<GenericParameterSubscription>> subscriptions;
   std::map<std::string, std::vector<std::function<void()>>> callbacks;
-  std::vector<std::shared_ptr<juce::AudioProcessorParameter::Listener>> listeners;
 
 };
 

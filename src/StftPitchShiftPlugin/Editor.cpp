@@ -2,9 +2,9 @@
 
 #include <StftPitchShiftPlugin/Logger.h>
 
-Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> params) :
+Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parameters) :
   juce::AudioProcessorEditor(process),
-  parameters(params)
+  parameters(parameters)
 {
   jive::Interpreter interpreter;
 
@@ -94,10 +94,12 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> params
     name->setText(parameter->getName(42), notify);
     value->setText(parameter->getText(parameter->getValue(), 42) + unit, notify);
 
-    parameters->on(id, [parameter, value, unit, notify]()
+    auto callback = [parameter, value, unit, notify]()
     {
       value->setText(parameter->getText(parameter->getValue(), 42) + unit, notify);
-    });
+    };
+
+    subscriptions.push_back(parameters->subscribe(id, callback));
 
     // FIXME: how to change font size via style in XML string?
     {
@@ -107,24 +109,24 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> params
     }
   };
 
-  auto update_timbre_slider = [&]()
+  auto update_timbre_slider = [parameters, root]()
   {
-    static const std::array<juce::Slider*, 1> timbre_slider =
+    static const std::array<juce::Slider*, 1> sliders =
     {
       find<juce::Slider>(root, "timbre-slider")
     };
 
     auto quefrency = parameters->get<float>("quefrency");
 
-    auto* slider = timbre_slider.front();
+    auto* slider = sliders.front();
     auto enabled = quefrency > 0;
 
     slider->setEnabled(enabled);
   };
 
-  auto update_pitch_sliders = [&]()
+  auto update_pitch_sliders = [parameters, root]()
   {
-    static const std::array<juce::Slider*, 5> pitch_sliders =
+    static const std::array<juce::Slider*, 5> sliders =
     {
       find<juce::Slider>(root, "pitch1-slider"),
       find<juce::Slider>(root, "pitch2-slider"),
@@ -133,12 +135,12 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> params
       find<juce::Slider>(root, "pitch5-slider")
     };
 
-    auto maxstages = static_cast<int>(pitch_sliders.size());
+    auto maxstages = static_cast<int>(sliders.size());
     auto stages = parameters->get<int>("stages");
 
     for (int i = 0; i < maxstages; ++i)
     {
-      auto* slider = pitch_sliders.at(i);
+      auto* slider = sliders.at(i);
       auto enabled = i < stages;
 
       slider->setEnabled(enabled);
@@ -155,10 +157,16 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> params
   attach_slider("stages");
 
   update_timbre_slider();
-  parameters->on("quefrency", update_timbre_slider);
+  {
+    subscriptions.push_back(parameters->subscribe(
+      "quefrency", update_timbre_slider));
+  }
 
   update_pitch_sliders();
-  parameters->on("stages", update_pitch_sliders);
+  {
+    subscriptions.push_back(parameters->subscribe(
+      "stages", update_pitch_sliders));
+  }
 
   addAndMakeVisible(*root);
   setSize(root->getWidth(), root->getHeight());

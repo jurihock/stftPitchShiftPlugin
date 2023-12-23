@@ -53,32 +53,32 @@ Parameters::~Parameters()
 
 void Parameters::onbypass(std::function<void()> callback)
 {
-  on("bypass", callback);
+  call("bypass", callback);
 }
 
 void Parameters::onnormalize(std::function<void()> callback)
 {
-  on("normalize", callback);
+  call("normalize", callback);
 }
 
 void Parameters::onquefrency(std::function<void()> callback)
 {
-  on("quefrency", callback);
+  call("quefrency", callback);
 }
 
 void Parameters::ontimbre(std::function<void()> callback)
 {
-  on("timbre", callback);
+  call("timbre", callback);
 }
 
 void Parameters::onpitch(std::function<void()> callback)
 {
-  on("pitch", callback);
+  call("pitch", callback);
 }
 
 void Parameters::onreset(std::function<void()> callback)
 {
-  on("reset", callback);
+  call("reset", callback);
 }
 
 bool Parameters::bypass() const
