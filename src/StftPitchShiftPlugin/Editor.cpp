@@ -96,7 +96,10 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
 
     auto callback = [parameter, value, unit, notify]()
     {
-      value->setText(parameter->getText(parameter->getValue(), 42) + unit, notify);
+      juce::MessageManager::callAsync([parameter, value, unit, notify]()
+      {
+        value->setText(parameter->getText(parameter->getValue(), 42) + unit, notify);
+      });
     };
 
     subscriptions.push_back(parameters->subscribe(id, callback));
@@ -116,12 +119,15 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
 
   auto update_timbre_slider = [timbre_slider, parameters]()
   {
-    auto quefrency = parameters->get<float>("quefrency");
+    juce::MessageManager::callAsync([timbre_slider, parameters]()
+    {
+      auto quefrency = parameters->get<float>("quefrency");
 
-    auto* component = timbre_slider.front()->getParentComponent();
-    auto enabled = quefrency > 0;
+      auto* component = timbre_slider.front()->getParentComponent();
+      auto enabled = quefrency > 0;
 
-    component->setEnabled(enabled);
+      component->setEnabled(enabled);
+    });
   };
 
   const std::array<juce::Slider*, 5> pitch_sliders
@@ -135,16 +141,19 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
 
   auto update_pitch_sliders = [pitch_sliders, parameters]()
   {
-    auto maxstages = static_cast<int>(pitch_sliders.size());
-    auto stages = parameters->get<int>("stages");
-
-    for (int i = 0; i < maxstages; ++i)
+    juce::MessageManager::callAsync([pitch_sliders, parameters]()
     {
-      auto* component = pitch_sliders.at(i)->getParentComponent();
-      auto enabled = i < stages;
+      auto maxstages = static_cast<int>(pitch_sliders.size());
+      auto stages = parameters->get<int>("stages");
 
-      component->setEnabled(enabled);
-    }
+      for (int i = 0; i < maxstages; ++i)
+      {
+        auto* component = pitch_sliders.at(i)->getParentComponent();
+        auto enabled = i < stages;
+
+        component->setEnabled(enabled);
+      }
+    });
   };
 
   attach_slider("quefrency");
