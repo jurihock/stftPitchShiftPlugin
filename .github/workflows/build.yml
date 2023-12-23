@@ -15,51 +15,51 @@ jobs:
 
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@master
+    - name:   Checkout
+      uses:   actions/checkout@master
 
-    - name: Setup (MacOS)
-      if:   matrix.os == 'macos-latest'
-      run:  ./scripts/prebuild_macos.sh
+    - name:   Setup (MacOS)
+      if:     matrix.os == 'macos-latest'
+      run:    ./scripts/prebuild_macos.sh
 
-    - name: Setup (Ubuntu)
-      if:   matrix.os == 'ubuntu-latest'
-      run:  ./scripts/prebuild_ubuntu.sh
+    - name:   Setup (Ubuntu)
+      if:     matrix.os == 'ubuntu-latest'
+      run:    ./scripts/prebuild_ubuntu.sh
 
-    - name: Setup (Windows)
-      if:   matrix.os == 'windows-latest'
-      run:  .\scripts\prebuild_windows.bat
-      shell: cmd
+    - name:   Setup (Windows)
+      if:     matrix.os == 'windows-latest'
+      run:    .\scripts\prebuild_windows.bat
+      shell:  cmd
 
-    - name: Build (MacOS)
-      if:   matrix.os == 'macos-latest'
-      run:  ./scripts/build_macos.sh
+    - name:   Build (MacOS)
+      if:     matrix.os == 'macos-latest'
+      run:    ./scripts/build_macos.sh
 
-    - name: Build (Ubuntu)
-      if:   matrix.os == 'ubuntu-latest'
-      run:  ./scripts/build_ubuntu.sh
+    - name:   Build (Ubuntu)
+      if:     matrix.os == 'ubuntu-latest'
+      run:    ./scripts/build_ubuntu.sh
 
-    - name: Build (Windows)
-      if:   matrix.os == 'windows-latest'
-      run:  .\scripts\build_windows.bat
-      shell: cmd
+    - name:   Build (Windows)
+      if:     matrix.os == 'windows-latest'
+      run:    .\scripts\build_windows.bat
+      shell:  cmd
 
-    - name: Test (MacOS)
-      if:   matrix.os == 'macos-latest'
-      run:  ./scripts/postbuild_macos.sh
+    - name:   Test (MacOS)
+      if:     matrix.os == 'macos-latest'
+      run:    ./scripts/postbuild_macos.sh
 
-    - name: Test (Ubuntu)
-      if:   matrix.os == 'ubuntu-latest'
-      run:  ./scripts/postbuild_ubuntu.sh
+    - name:   Test (Ubuntu)
+      if:     matrix.os == 'ubuntu-latest'
+      run:    ./scripts/postbuild_ubuntu.sh
 
-    - name: Test (Windows)
-      if:   matrix.os == 'windows-latest'
-      run:  .\scripts\postbuild_windows.bat
-      shell: cmd
+    - name:   Test (Windows)
+      if:     matrix.os == 'windows-latest'
+      run:    .\scripts\postbuild_windows.bat
+      shell:  cmd
 
-    - name: Archive build artefacts
-      if:   github.event_name == 'push'
-      uses: actions/upload-artifact@master
+    - name:   Archive build artefacts
+      if:     github.event_name == 'push'
+      uses:   actions/upload-artifact@master
       with:
         name: StftPitchShiftPlugin-${{matrix.os}}
         path: ./build/StftPitchShiftPlugin_artefacts/Release
