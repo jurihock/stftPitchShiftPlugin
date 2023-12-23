@@ -6,7 +6,12 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
   juce::AudioProcessorEditor(process),
   parameters(parameters)
 {
-  jive::Interpreter interpreter;
+  juce::String style(
+    R"({
+      ".footer": {
+        "background": "#ff00ff"
+      }
+    })");
 
   juce::String xml(
     R"(
@@ -65,7 +70,7 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
 
         </Component>
 
-        <Component {flex-row}>
+        <Component class="footer" {flex-row}>
           <Component {flex-col} {flex-fill}>
             <Name     id="bypass-name"/>
             <Checkbox id="bypass-button"/>
@@ -101,7 +106,13 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
   xml = xml.replace("{flex-row}",  R"(display="flex" flex-direction="row")");
   xml = xml.replace("{flex-col}",  R"(display="flex" flex-direction="column")");
 
-  auto* root = (view = interpreter.interpret(xml))->getComponent().get();
+  jive::Interpreter interpreter;
+
+  auto tree = jive::parseXML(xml);
+  tree.setProperty("style", style, nullptr);
+
+  view = interpreter.interpret(tree);
+  auto* root = view->getComponent().get();
 
   auto attach_checkbox = [&](const std::string& id)
   {
