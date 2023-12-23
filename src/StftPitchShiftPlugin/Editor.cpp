@@ -109,38 +109,38 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
     }
   };
 
-  auto update_timbre_slider = [parameters, root]()
+  const std::array<juce::Slider*, 1> timbre_slider
   {
-    static const std::array<juce::Slider*, 1> sliders =
-    {
-      find<juce::Slider>(root, "timbre-slider")
-    };
+    find<juce::Slider>(root, "timbre-slider")
+  };
 
+  auto update_timbre_slider = [timbre_slider, parameters]()
+  {
     auto quefrency = parameters->get<float>("quefrency");
 
-    auto* slider = sliders.front();
+    auto* slider = timbre_slider.front();
     auto enabled = quefrency > 0;
 
     slider->setEnabled(enabled);
   };
 
-  auto update_pitch_sliders = [parameters, root]()
+  const std::array<juce::Slider*, 5> pitch_sliders
   {
-    static const std::array<juce::Slider*, 5> sliders =
-    {
-      find<juce::Slider>(root, "pitch1-slider"),
-      find<juce::Slider>(root, "pitch2-slider"),
-      find<juce::Slider>(root, "pitch3-slider"),
-      find<juce::Slider>(root, "pitch4-slider"),
-      find<juce::Slider>(root, "pitch5-slider")
-    };
+    find<juce::Slider>(root, "pitch1-slider"),
+    find<juce::Slider>(root, "pitch2-slider"),
+    find<juce::Slider>(root, "pitch3-slider"),
+    find<juce::Slider>(root, "pitch4-slider"),
+    find<juce::Slider>(root, "pitch5-slider")
+  };
 
-    auto maxstages = static_cast<int>(sliders.size());
+  auto update_pitch_sliders = [pitch_sliders, parameters]()
+  {
+    auto maxstages = static_cast<int>(pitch_sliders.size());
     auto stages = parameters->get<int>("stages");
 
     for (int i = 0; i < maxstages; ++i)
     {
-      auto* slider = sliders.at(i);
+      auto* slider = pitch_sliders.at(i);
       auto enabled = i < stages;
 
       slider->setEnabled(enabled);
@@ -157,16 +157,12 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
   attach_slider("stages");
 
   update_timbre_slider();
-  {
-    subscriptions.push_back(parameters->subscribe(
-      "quefrency", update_timbre_slider));
-  }
+  subscriptions.push_back(parameters->subscribe(
+    "quefrency", update_timbre_slider));
 
   update_pitch_sliders();
-  {
-    subscriptions.push_back(parameters->subscribe(
-      "stages", update_pitch_sliders));
-  }
+  subscriptions.push_back(parameters->subscribe(
+    "stages", update_pitch_sliders));
 
   addAndMakeVisible(*root);
   setSize(root->getWidth(), root->getHeight());
