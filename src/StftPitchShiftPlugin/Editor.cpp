@@ -123,7 +123,7 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
     {
       auto quefrency = parameters->get<float>("quefrency");
 
-      auto* component = timbre_slider.front()->getParentComponent();
+      auto* component = timbre_slider.at(0)->getParentComponent();
       auto enabled = quefrency > 0;
 
       component->setEnabled(enabled);
