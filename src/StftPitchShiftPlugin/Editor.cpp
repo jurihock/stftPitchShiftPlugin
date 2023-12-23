@@ -117,17 +117,19 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
     find<juce::Slider>(root, "timbre-slider")
   };
 
-  auto update_timbre_slider = [timbre_slider, parameters]()
+  auto update_timbre_slider_sync = [timbre_slider, parameters]()
   {
-    juce::MessageManager::callAsync([timbre_slider, parameters]()
-    {
-      auto quefrency = parameters->get<float>("quefrency");
+    auto quefrency = parameters->get<float>("quefrency");
 
-      auto* component = timbre_slider.at(0)->getParentComponent();
-      auto enabled = quefrency > 0;
+    auto* component = timbre_slider.at(0)->getParentComponent();
+    auto enabled = quefrency > 0;
 
-      component->setEnabled(enabled);
-    });
+    component->setEnabled(enabled);
+  };
+
+  auto update_timbre_slider_async = [update_timbre_slider_sync]()
+  {
+    juce::MessageManager::callAsync(update_timbre_slider_sync);
   };
 
   const std::array<juce::Slider*, 5> pitch_sliders
@@ -139,21 +141,23 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
     find<juce::Slider>(root, "pitch5-slider")
   };
 
-  auto update_pitch_sliders = [pitch_sliders, parameters]()
+  auto update_pitch_sliders_sync = [pitch_sliders, parameters]()
   {
-    juce::MessageManager::callAsync([pitch_sliders, parameters]()
+    auto maxstages = static_cast<int>(pitch_sliders.size());
+    auto stages = parameters->get<int>("stages");
+
+    for (int i = 0; i < maxstages; ++i)
     {
-      auto maxstages = static_cast<int>(pitch_sliders.size());
-      auto stages = parameters->get<int>("stages");
+      auto* component = pitch_sliders.at(i)->getParentComponent();
+      auto enabled = i < stages;
 
-      for (int i = 0; i < maxstages; ++i)
-      {
-        auto* component = pitch_sliders.at(i)->getParentComponent();
-        auto enabled = i < stages;
+      component->setEnabled(enabled);
+    }
+  };
 
-        component->setEnabled(enabled);
-      }
-    });
+  auto update_pitch_sliders_async = [update_pitch_sliders_sync]()
+  {
+    juce::MessageManager::callAsync(update_pitch_sliders_sync);
   };
 
   attach_slider("quefrency");
@@ -165,13 +169,13 @@ Editor::Editor(juce::AudioProcessor& process, std::shared_ptr<Parameters> parame
   attach_slider("pitch5");
   attach_slider("stages");
 
-  update_timbre_slider();
+  update_timbre_slider_sync();
   subscriptions.push_back(parameters->subscribe(
-    "quefrency", update_timbre_slider));
+    "quefrency", update_timbre_slider_async));
 
-  update_pitch_sliders();
+  update_pitch_sliders_sync();
   subscriptions.push_back(parameters->subscribe(
-    "stages", update_pitch_sliders));
+    "stages", update_pitch_sliders_async));
 
   addAndMakeVisible(*root);
   setSize(root->getWidth(), root->getHeight());
