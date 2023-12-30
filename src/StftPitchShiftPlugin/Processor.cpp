@@ -50,9 +50,10 @@ Processor::~Processor()
 
 const juce::String Processor::getName() const
 {
-  return juce::String(ProjectInfo::projectName) +
-         juce::String(" v") +
-         juce::String(ProjectInfo::versionString);
+  return juce::String::formatted(
+    "%s v%s",
+    ProjectInfo::projectName,
+    ProjectInfo::versionString);
 }
 
 bool Processor::hasEditor() const { return true; }
