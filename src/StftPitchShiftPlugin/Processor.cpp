@@ -3,6 +3,7 @@
 #include <StftPitchShiftPlugin/Effect/InstantEffect.h>
 #include <StftPitchShiftPlugin/Effect/DelayedEffect.h>
 
+#include <StftPitchShiftPlugin/Chronometer.h>
 #include <StftPitchShiftPlugin/Logger.h>
 
 Processor::Processor() :
@@ -304,5 +305,3 @@ void Processor::resetEffect(const State& state)
 
   setLatencySamples(latency);
 }
-
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new Processor(); }

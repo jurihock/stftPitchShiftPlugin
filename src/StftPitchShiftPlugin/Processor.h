@@ -2,7 +2,6 @@
 
 #include <JuceHeader.h>
 
-#include <StftPitchShiftPlugin/Chronometer.h>
 #include <StftPitchShiftPlugin/Editor.h>
 #include <StftPitchShiftPlugin/Effect.h>
 #include <StftPitchShiftPlugin/Parameters.h>
