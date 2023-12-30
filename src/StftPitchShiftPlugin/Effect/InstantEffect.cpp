@@ -1,7 +1,7 @@
-#include <StftPitchShiftPlugin/Core/InstantCore.h>
+#include <StftPitchShiftPlugin/Effect/InstantEffect.h>
 
-InstantCore::InstantCore(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
-  Core(samplerate, blocksize, dftsize, overlap)
+InstantEffect::InstantEffect(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
+  Effect(samplerate, blocksize, dftsize, overlap)
 {
   const auto total_buffer_size = analysis_window_size + synthesis_window_size;
 
@@ -9,21 +9,21 @@ InstantCore::InstantCore(const double samplerate, const int blocksize, const int
   buffer.output.resize(total_buffer_size);
 }
 
-InstantCore::~InstantCore()
+InstantEffect::~InstantEffect()
 {
 }
 
-int InstantCore::latency() const
+int InstantEffect::latency() const
 {
   return static_cast<int>(synthesis_window_size);
 }
 
-bool InstantCore::compatible(const int blocksize) const
+bool InstantEffect::compatible(const int blocksize) const
 {
   return static_cast<size_t>(blocksize) == synthesis_window_size;
 }
 
-void InstantCore::dry(const std::span<const float> input, const std::span<float> output)
+void InstantEffect::dry(const std::span<const float> input, const std::span<float> output)
 {
   process(input, output, [](std::span<double> x, std::span<double> y)
   {
@@ -31,7 +31,7 @@ void InstantCore::dry(const std::span<const float> input, const std::span<float>
   });
 }
 
-void InstantCore::wet(const std::span<const float> input, const std::span<float> output)
+void InstantEffect::wet(const std::span<const float> input, const std::span<float> output)
 {
   process(input, output, [&](std::span<double> x, std::span<double> y)
   {
@@ -39,7 +39,7 @@ void InstantCore::wet(const std::span<const float> input, const std::span<float>
   });
 }
 
-void InstantCore::process(const std::span<const float> input, const std::span<float> output,
+void InstantEffect::process(const std::span<const float> input, const std::span<float> output,
                           std::function<void(std::span<double> x, std::span<double> y)> callback)
 {
   // shift input buffer

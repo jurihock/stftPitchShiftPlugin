@@ -1,6 +1,6 @@
-#include <StftPitchShiftPlugin/Core.h>
+#include <StftPitchShiftPlugin/Effect.h>
 
-Core::Core(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
+Effect::Effect(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
   samplerate(samplerate), blocksize(blocksize), dftsize(dftsize), overlap(overlap),
   analysis_window_size(static_cast<size_t>(dftsize + dftsize)),
   synthesis_window_size(static_cast<size_t>(blocksize))
@@ -14,31 +14,31 @@ Core::Core(const double samplerate, const int blocksize, const int dftsize, cons
   core = std::make_unique<stftpitchshift::StftPitchShiftCore<double>>(fft, winsize, hopsize, samplerate);
 }
 
-Core::~Core()
+Effect::~Effect()
 {
 }
 
-void Core::normalize(bool value)
+void Effect::normalize(bool value)
 {
   core->normalization(value);
 }
 
-void Core::quefrency(double value)
+void Effect::quefrency(double value)
 {
   core->quefrency(value);
 }
 
-void Core::timbre(double value)
+void Effect::timbre(double value)
 {
   core->distortion(value);
 }
 
-void Core::pitch(std::vector<double> values)
+void Effect::pitch(std::vector<double> values)
 {
   core->factors(values);
 }
 
-void Core::stft_pitch_shift(const std::span<const double> input, const std::span<double> output) const
+void Effect::stft_pitch_shift(const std::span<const double> input, const std::span<double> output) const
 {
   (*stft)(input, output, [&](std::span<std::complex<double>> dft)
   {

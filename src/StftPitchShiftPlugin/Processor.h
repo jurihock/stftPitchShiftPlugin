@@ -3,8 +3,8 @@
 #include <JuceHeader.h>
 
 #include <StftPitchShiftPlugin/Chronometer.h>
-#include <StftPitchShiftPlugin/Core.h>
 #include <StftPitchShiftPlugin/Editor.h>
+#include <StftPitchShiftPlugin/Effect.h>
 #include <StftPitchShiftPlugin/Parameters.h>
 
 class Processor final : public juce::AudioProcessor
@@ -53,10 +53,10 @@ private:
 
   std::mutex mutex;
   std::optional<State> state;
-  std::unique_ptr<Core> core;
+  std::unique_ptr<Effect> effect;
   std::shared_ptr<Parameters> parameters;
 
-  void resetCore(const State& state);
+  void resetEffect(const State& state);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Processor)
 

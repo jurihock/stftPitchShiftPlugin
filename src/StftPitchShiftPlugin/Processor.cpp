@@ -1,7 +1,7 @@
 #include <StftPitchShiftPlugin/Processor.h>
 
-#include <StftPitchShiftPlugin/Core/InstantCore.h>
-#include <StftPitchShiftPlugin/Core/DelayedCore.h>
+#include <StftPitchShiftPlugin/Effect/InstantEffect.h>
+#include <StftPitchShiftPlugin/Effect/DelayedEffect.h>
 
 #include <StftPitchShiftPlugin/Logger.h>
 
@@ -16,31 +16,31 @@ Processor::Processor() :
   parameters->onnormalize([&]()
   {
     std::lock_guard lock(mutex);
-    if (core) { core->normalize(parameters->normalize()); }
+    if (effect) { effect->normalize(parameters->normalize()); }
   });
 
   parameters->onquefrency([&]()
   {
     std::lock_guard lock(mutex);
-    if (core) { core->quefrency(parameters->quefrency()); }
+    if (effect) { effect->quefrency(parameters->quefrency()); }
   });
 
   parameters->ontimbre([&]()
   {
     std::lock_guard lock(mutex);
-    if (core) { core->timbre(parameters->timbre()); }
+    if (effect) { effect->timbre(parameters->timbre()); }
   });
 
   parameters->onpitch([&]()
   {
     std::lock_guard lock(mutex);
-    if (core) { core->pitch(parameters->pitch()); }
+    if (effect) { effect->pitch(parameters->pitch()); }
   });
 
   parameters->onreset([&]()
   {
     std::lock_guard lock(mutex);
-    if (state) { resetCore(state.value()); }
+    if (state) { resetEffect(state.value()); }
   });
 }
 
@@ -102,7 +102,7 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
   std::lock_guard lock(mutex);
 
   state = std::nullopt;
-  core = nullptr;
+  effect = nullptr;
 
   if (samplerate < 1)
   {
@@ -122,7 +122,7 @@ void Processor::prepareToPlay(double samplerate, int blocksize)
 
   try
   {
-    resetCore(state.value());
+    resetEffect(state.value());
   }
   catch(const std::exception& exception)
   {
@@ -139,7 +139,7 @@ void Processor::releaseResources()
   LOG("Release resources");
 
   state = std::nullopt;
-  core = nullptr;
+  effect = nullptr;
 }
 
 void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& midi)
@@ -184,11 +184,11 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
     if (parameters->bypass())
     {
-      core->dry(input, output);
+      effect->dry(input, output);
     }
     else
     {
-      core->wet(input, output);
+      effect->wet(input, output);
     }
   };
 
@@ -211,11 +211,11 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   {
     process_stereo_output("state is not initialized");
   }
-  else if (!core)
+  else if (!effect)
   {
-    process_stereo_output("core is not initialized");
+    process_stereo_output("effect is not initialized");
   }
-  else if (!core->compatible(channel_samples))
+  else if (!effect->compatible(channel_samples))
   {
     State oldstate = state.value();
     State newstate = oldstate;
@@ -226,7 +226,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
 
     try
     {
-      resetCore(newstate);
+      resetEffect(newstate);
 
       state = newstate;
 
@@ -264,7 +264,7 @@ void Processor::processBlock(juce::AudioBuffer<float>& audio, juce::MidiBuffer& 
   }
 }
 
-void Processor::resetCore(const State& state)
+void Processor::resetEffect(const State& state)
 {
   const bool lowlatency = parameters->lowlatency();
 
@@ -273,11 +273,11 @@ void Processor::resetCore(const State& state)
   const int dftsize = parameters->dftsize(blocksize);
   const int overlap = parameters->overlap(blocksize);
 
-  LOG("Reset core (dftsize %d, overlap %d)", dftsize, overlap);
+  LOG("Reset effect (dftsize %d, overlap %d)", dftsize, overlap);
 
   if (lowlatency)
   {
-    core = std::make_unique<InstantCore>(
+    effect = std::make_unique<InstantEffect>(
       samplerate,
       blocksize,
       dftsize,
@@ -285,19 +285,19 @@ void Processor::resetCore(const State& state)
   }
   else
   {
-    core = std::make_unique<DelayedCore>(
+    effect = std::make_unique<DelayedEffect>(
       samplerate,
       blocksize,
       dftsize,
       overlap);
   }
 
-  core->normalize(parameters->normalize());
-  core->quefrency(parameters->quefrency());
-  core->timbre(parameters->timbre());
-  core->pitch(parameters->pitch());
+  effect->normalize(parameters->normalize());
+  effect->quefrency(parameters->quefrency());
+  effect->timbre(parameters->timbre());
+  effect->pitch(parameters->pitch());
 
-  const int latency = core->latency();
+  const int latency = effect->latency();
 
   LOG("Latency %d (%d ms)", latency, static_cast<int>(1e+3 * latency / samplerate));
 

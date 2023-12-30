@@ -5,13 +5,13 @@
 #include <StftPitchShift/STFT.h>
 #include <StftPitchShift/StftPitchShiftCore.h>
 
-class Core
+class Effect
 {
 
 public:
 
-  Core(const double samplerate, const int blocksize, const int dftsize, const int overlap);
-  virtual ~Core();
+  Effect(const double samplerate, const int blocksize, const int dftsize, const int overlap);
+  virtual ~Effect();
 
   void normalize(bool value);
   void quefrency(double value);

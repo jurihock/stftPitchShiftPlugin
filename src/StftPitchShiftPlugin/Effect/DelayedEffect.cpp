@@ -1,7 +1,7 @@
-#include <StftPitchShiftPlugin/Core/DelayedCore.h>
+#include <StftPitchShiftPlugin/Effect/DelayedEffect.h>
 
-DelayedCore::DelayedCore(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
-  InstantCore(samplerate, dftsize + dftsize, dftsize, overlap), host_block_size(blocksize)
+DelayedEffect::DelayedEffect(const double samplerate, const int blocksize, const int dftsize, const int overlap) :
+  InstantEffect(samplerate, dftsize + dftsize, dftsize, overlap), host_block_size(blocksize)
 {
   const auto total_buffer_size = analysis_window_size + synthesis_window_size;
 
@@ -11,37 +11,37 @@ DelayedCore::DelayedCore(const double samplerate, const int blocksize, const int
   samples = 0;
 }
 
-DelayedCore::~DelayedCore()
+DelayedEffect::~DelayedEffect()
 {
 }
 
-int DelayedCore::latency() const
+int DelayedEffect::latency() const
 {
   return 6 * dftsize - host_block_size;
 }
 
-bool DelayedCore::compatible(const int blocksize) const
+bool DelayedEffect::compatible(const int blocksize) const
 {
   return static_cast<size_t>(blocksize) <= synthesis_window_size;
 }
 
-void DelayedCore::dry(const std::span<const float> input, const std::span<float> output)
+void DelayedEffect::dry(const std::span<const float> input, const std::span<float> output)
 {
   process(input, output, [&](std::span<float> x, std::span<float> y)
   {
-    InstantCore::dry(x, y);
+    InstantEffect::dry(x, y);
   });
 }
 
-void DelayedCore::wet(const std::span<const float> input, const std::span<float> output)
+void DelayedEffect::wet(const std::span<const float> input, const std::span<float> output)
 {
   process(input, output, [&](std::span<float> x, std::span<float> y)
   {
-    InstantCore::wet(x, y);
+    InstantEffect::wet(x, y);
   });
 }
 
-void DelayedCore::process(const std::span<const float> input, const std::span<float> output,
+void DelayedEffect::process(const std::span<const float> input, const std::span<float> output,
                           std::function<void(std::span<float> x, std::span<float> y)> callback)
 {
   const auto minsamples = input.size();

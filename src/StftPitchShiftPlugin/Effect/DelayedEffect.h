@@ -1,14 +1,14 @@
 #pragma once
 
-#include <StftPitchShiftPlugin/Core/InstantCore.h>
+#include <StftPitchShiftPlugin/Effect/InstantEffect.h>
 
-class DelayedCore : public InstantCore
+class DelayedEffect : public InstantEffect
 {
 
 public:
 
-  DelayedCore(const double samplerate, const int blocksize, const int dftsize, const int overlap);
-  ~DelayedCore();
+  DelayedEffect(const double samplerate, const int blocksize, const int dftsize, const int overlap);
+  ~DelayedEffect();
 
   int latency() const override;
   bool compatible(const int blocksize) const override;
