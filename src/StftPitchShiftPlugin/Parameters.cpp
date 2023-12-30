@@ -175,7 +175,7 @@ void Parameters::load(const void* data, const int size)
       return;
     }
 
-    if (xml->hasTagName("StftPitchShiftPlugin") == false) { return; }
+    if (xml->hasTagName(ProjectInfo::projectName) == false) { return; }
     if (xml->getIntAttribute("schema") != schema) { return; }
 
     read<bool>("bypass", *xml);
@@ -207,7 +207,7 @@ void Parameters::save(juce::MemoryBlock& data)
 {
   try
   {
-    auto xml = std::make_unique<juce::XmlElement>("StftPitchShiftPlugin");
+    auto xml = std::make_unique<juce::XmlElement>(ProjectInfo::projectName);
 
     xml->setAttribute("schema", schema);
 
