@@ -53,4 +53,6 @@ private:
     return static_cast<int>(y);
   }
 
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
+
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <JuceHeader.h>
+
 #include <StftPitchShiftPlugin/FFT.h>
 
 #include <StftPitchShift/STFT.h>
@@ -39,5 +41,7 @@ private:
 
   std::unique_ptr<stftpitchshift::STFT<double>> stft;
   std::unique_ptr<stftpitchshift::StftPitchShiftCore<double>> core;
+
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Effect)
 
 };
