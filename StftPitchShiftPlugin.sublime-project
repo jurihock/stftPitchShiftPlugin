@@ -18,6 +18,16 @@
       "working_dir": "${project_path}"
     },
     {
+      "name": "Build (debug)",
+      "shell_cmd": "make CONFIG=Debug build",
+      "working_dir": "${project_path}"
+    },
+    {
+      "name": "Build (release)",
+      "shell_cmd": "make CONFIG=Release build",
+      "working_dir": "${project_path}"
+    },
+    {
       "name": "Test (debug)",
       "shell_cmd": "make CONFIG=Debug build test",
       "working_dir": "${project_path}"

@@ -2,6 +2,9 @@ name: build.yml
 
 on: [push, pull_request]
 
+env:
+  plugin: StftPitchShiftPlugin
+
 jobs:
 
   build:
@@ -61,5 +64,5 @@ jobs:
       if:     github.event_name == 'push'
       uses:   actions/upload-artifact@master
       with:
-        name: StftPitchShiftPlugin-${{matrix.os}}
-        path: ./build/StftPitchShiftPlugin_artefacts/Release
+        name: ${{env.plugin}}-${{matrix.os}}
+        path: ./build/${{env.plugin}}_artefacts/Release

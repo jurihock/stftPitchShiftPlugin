@@ -5,10 +5,11 @@ ROOT=$(dirname "${BASE}")
 
 ARGS="--strictness-level 5 --validate-in-process --validate"
 CONFIG=Release
+PLUGIN=StftPitchShiftPlugin
 INPUT=${ROOT}
 OUTPUT=${ROOT}/build
 
-ARTEFACTS=${OUTPUT}/StftPitchShiftPlugin_artefacts/${CONFIG}
+ARTEFACTS=${OUTPUT}/${PLUGIN}_artefacts/${CONFIG}
 PLUGINVAL=${OUTPUT}/_deps/pluginval-src/pluginval
 
 # If specified, avoids tests that create GUI windows,
@@ -17,14 +18,14 @@ PLUGINVAL=${OUTPUT}/_deps/pluginval-src/pluginval
 export SKIP_GUI_TESTS=1
 
 # Execute pluginval.
-"${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/VST3/StftPitchShiftPlugin.vst3" || exit $?
+"${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/VST3/${PLUGIN}.vst3" || exit $?
 
 # Delete intermediate files.
-rm -fv "${ARTEFACTS}/libStftPitchShiftPlugin_SharedCode.a" || exit $?
+rm -fv "${ARTEFACTS}/lib${PLUGIN}_SharedCode.a" || exit $?
 
 # Zip binaries to preserve file permissions during artifact upload.
 # https://github.com/actions/upload-artifact/issues/38
 # https://github.com/actions/upload-artifact#permission-loss
 pushd "${ARTEFACTS}"
-zip -rm StftPitchShiftPlugin.zip . || exit $?
+zip -rm ${PLUGIN}.zip . || exit $?
 popd
