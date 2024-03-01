@@ -60,7 +60,7 @@ void InstantCore::process(const std::span<const float> input, const std::span<fl
 
   // copy new output samples back
   std::transform(
-    buffer.output.begin() - synthesis_window_size + analysis_window_size,
+    (buffer.output.begin() + analysis_window_size) - synthesis_window_size,
     buffer.output.end() - synthesis_window_size,
     output.begin(),
     transform<double, float>);
