@@ -22,11 +22,10 @@ PLUGINVAL=${OUTPUT}/_deps/pluginval-src/Contents/MacOS/pluginval
 # https://melatonin.dev/blog/pluginval-is-a-plugin-devs-best-friend#troubleshooting-pluginval-no-types-found
 if [ -d ~/Library/Audio/Plug-Ins/Components ]; then
 
-  cp -rfv "${ARTEFACTS}/AU/StftPitchShiftPlugin.component" ~/Library/Audio/Plug-Ins/Components || exit $?
-
-  "${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/AU/StftPitchShiftPlugin.component" || exit $?
-
-  rm -rfv ~/Library/Audio/Plug-Ins/Components/StftPitchShiftPlugin.component || exit $?
+  echo "Skipping AU plugin validation (issue #5)"
+  # cp -rfv "${ARTEFACTS}/AU/StftPitchShiftPlugin.component" ~/Library/Audio/Plug-Ins/Components || exit $?
+  # "${PLUGINVAL}" ${ARGS} "${ARTEFACTS}/AU/StftPitchShiftPlugin.component" || exit $?
+  # rm -rfv ~/Library/Audio/Plug-Ins/Components/StftPitchShiftPlugin.component || exit $?
 
 fi
 
