@@ -29,7 +29,7 @@ Please refer to the [User Manual](MANUAL.md) for detailed explanations.
 
 The ready to use binaries can be obtained in two ways:
 
-- via build artifacts attached to [releases](https://github.com/jurihock/stftPitchShiftPlugin/releases) or
+- via build artifacts attached to [releases](https://github.com/jurihock/stftPitchShiftPlugin/releases) and continuous builds or
 - via a local build from the source code.
 
 ### Continuous build artifacts
