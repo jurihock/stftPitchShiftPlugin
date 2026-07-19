@@ -78,11 +78,20 @@ jobs:
     - name: Download all build artifacts
       uses: actions/download-artifact@master
       with:
-        path: release-artifacts
+        path: artifacts
+
+    - name: Zip build artifacts
+      run: |
+        cd artifacts
+        ls -1
+        for artifact in */; do
+          zip -r "${artifact%/}.zip" "${artifact}"
+        done
+        ls -1 *.zip
 
     - name: Upload build artifacts to release
       uses: softprops/action-gh-release@master
       with:
-        files: release-artifacts/**/*
+        files: artifacts/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
