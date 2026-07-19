@@ -80,14 +80,14 @@ jobs:
       with:
         path: artifacts
 
-    - name: Zip build artifacts
+    - name: Rename build artifacts
       run: |
         cd artifacts
         ls -1
         for artifact in */; do
           oldname="StftPitchShiftPlugin"
           newname=$(echo "${artifact%/}" | sed 's/-latest$//')-${{github.ref_name}}
-          mv "${oldname}.zip" "../${newname}.zip"
+          mv "${artifact}/${oldname}.zip" "${newname}.zip"
         done
         ls -1 *.zip
 
