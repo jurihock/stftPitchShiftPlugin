@@ -1,6 +1,6 @@
 # https://github.com/cpm-cmake/CPM.cmake
 
-set(CPMSRC "https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.38.6/CPM.cmake")
+set(CPMSRC "https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.43.1/CPM.cmake")
 set(CPMDST "${CMAKE_BINARY_DIR}/CPM.cmake")
 
 if(NOT EXISTS "${CPMDST}")
