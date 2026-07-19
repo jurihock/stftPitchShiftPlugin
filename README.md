@@ -27,10 +27,14 @@ Please refer to the [User Manual](MANUAL.md) for detailed explanations.
 
 ## Binaries
 
-The ready to use binaries can be obtained in two ways:
+The ready to use binaries can be obtained in several ways:
 
-- via build artifacts attached to [releases](https://github.com/jurihock/stftPitchShiftPlugin/releases) and continuous builds or
+- via build artifacts attached to [releases](https://github.com/jurihock/stftPitchShiftPlugin/releases/latest),
+- via continuous build artifacts or
 - via a local build from the source code.
+
+On macOS, you will also have to deal with the [Gatekeeper](https://support.apple.com/HT202491),
+in order to execute the standalone app or to load the AU or VST3 plugin in your DAW.
 
 ### Continuous build artifacts
 
@@ -40,8 +44,7 @@ Use one of the following links to download the latest binaries for your specific
 - [Ubuntu](https://nightly.link/jurihock/stftPitchShiftPlugin/workflows/build/main/StftPitchShiftPlugin-ubuntu-latest.zip)
 - [Windows](https://nightly.link/jurihock/stftPitchShiftPlugin/workflows/build/main/StftPitchShiftPlugin-windows-latest.zip)
 
-On macOS, you will also have to deal with the [Gatekeeper](https://support.apple.com/HT202491),
-in order to execute the standalone app or to load the AU or VST3 plugin in your DAW.
+Continuous build artifacts are not persistent. They will disappear after 90 days.
 
 ### Build from source code
 
