@@ -20,7 +20,7 @@ help:
 	@echo reset
 
 build:
-	@cmake -G $(GENERATOR) -DCMAKE_BUILD_TYPE=$(CONFIG) $(PLATFORM) $(OPTIONS) -S $(INPUT) -B $(OUTPUT)
+	@cmake --fresh -G $(GENERATOR) -DCMAKE_BUILD_TYPE=$(CONFIG) $(PLATFORM) $(OPTIONS) -S $(INPUT) -B $(OUTPUT)
 	@cmake --build $(OUTPUT)
 
 clean:
