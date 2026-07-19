@@ -85,7 +85,9 @@ jobs:
         cd artifacts
         ls -1
         for artifact in */; do
-          zip -r "${artifact%/}.zip" "${artifact}"
+          oldname="StftPitchShiftPlugin"
+          newname=$(echo "${artifact%/}" | sed 's/-latest$//')-${{github.ref_name}}
+          mv "${oldname}.zip" "../${newname}.zip"
         done
         ls -1 *.zip
 
@@ -94,4 +96,4 @@ jobs:
       with:
         files: artifacts/*.zip
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
