@@ -1,6 +1,10 @@
 name: build.yml
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  release:
+    types: [created]
 
 jobs:
 
@@ -54,9 +58,29 @@ jobs:
       if:   matrix.os == 'windows-latest'
       run:  cmd /c ".\scripts\postbuild_windows.bat"
 
-    - name: Archive build artefacts
+    - name: Upload build artifacts
       if:   github.event_name == 'push'
       uses: actions/upload-artifact@master
       with:
         name: StftPitchShiftPlugin-${{matrix.os}}
         path: ./build/StftPitchShiftPlugin_artefacts/Release
+
+  publish-release:
+
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+
+    steps:
+
+    - name: Download all build artifacts
+      uses: actions/download-artifact@master
+      with:
+        path: release-artifacts
+
+    - name: Upload build artifacts to release
+      uses: softprops/action-gh-release@master
+      with:
+        files: release-artifacts/**/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
